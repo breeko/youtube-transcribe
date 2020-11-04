@@ -1,7 +1,14 @@
 interface Line {
   speaker: string
   startTime: number,
-  words: Array<{content: string, start?: string, end?: string}>
+  endTime: number,
+  words: Word[]
+}
+
+interface Word {
+  content: string
+  start?: number
+  end?: number
 }
 
 declare module 'youtube-player/dist/types' {

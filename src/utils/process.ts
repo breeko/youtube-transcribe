@@ -1,3 +1,4 @@
+const parseFloat = (s: string | undefined) => s === undefined ? undefined : Number.parseFloat(s)
 
 export const process = (raw: string) => {
   const results: Line[] = []
@@ -16,12 +17,15 @@ export const process = (raw: string) => {
         prior.words.push({content})
       } else {
         const speaker = speakers.get(item.start_time)
-        const word = {content, start: item.start_time, end: item.end_time}
+        const word = {content, start: parseFloat(item.start_time), end: parseFloat(item.end_time)}
+        const startTime = parseFloat(item.start_time)
+        const endTime = parseFloat(item.end_time)
         if (prior?.speaker !== speaker) {
           // new speaker!
-          results.push({speaker, startTime: item.start_time, words: [word]})
+          results.push({ speaker, startTime, endTime, words: [word] })
         } else {
           prior.words.push(word)
+          prior.endTime = endTime
         }
       }  
     }

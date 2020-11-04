@@ -1,10 +1,11 @@
 import React from "react"
+import AppLayout from "../src/AppLayout"
 
 const Main: React.FunctionComponent = () => {
   return(
-    <div>
+    <AppLayout>
       Hello World
-    </div>
+    </AppLayout>
   )
 }
 

@@ -1,13 +1,16 @@
+import { Spin } from "antd"
+import { Storage } from "aws-amplify"
 import { useRouter } from "next/dist/client/router"
 import React from "react"
-import data from '../../../data/lex-fridman-george-hotz-142.json'
 import AppLayout from "../../../src/AppLayout"
-import Transcript from "../../../src/components/Transcript"
+import Transcript from "../../../src/components/transcript"
 import Video from "../../../src/components/Video"
 import { process } from "../../../src/utils/process"
 
 const VideoPage: React.FunctionComponent = () => {
   const [videoId, setVideoId] = React.useState<string | undefined>()
+  const [lines, setLines] = React.useState<Line[]>([])
+  const [isError, setIsError] = React.useState(false)
   const [isLoading, setIsLoading] = React.useState(true)
   const [seconds, setSeconds] = React.useState<number|undefined>()
   const [jumpToSeconds, setJumpToSeconds] = React.useState<number|undefined>()
@@ -19,8 +22,14 @@ const VideoPage: React.FunctionComponent = () => {
     const { video } = router.query
     if (typeof video === "string") {
       setVideoId(video)
+      Storage.get(`${video}.json`, { download: true} )
+        .then((e: {Body: Blob}) => e.Body.text()
+          .then(s => process(s)))
+          .then(l => setLines(l))
+          .catch(() => setIsError(true))
+        .finally(() => setIsLoading(false))
+        .catch(() => setIsError(true))
     }
-    setIsLoading(false)
   }
 
   React.useEffect(() => {
@@ -28,15 +37,18 @@ const VideoPage: React.FunctionComponent = () => {
   }, [router.query])
 
   // const videoId = "_L3gNaAVjQ4"
-  const lines = process(JSON.stringify(data))
   
   // TODO: add this to json
   const speakerMappings: {[speaker: string]: string} = {spk_0: "Lex Fridman", spk_1: "George Hotz"}
 
   return(
     <AppLayout>
-      <Video videoId={videoId} seconds={seconds} jump={setJumpToSeconds}/>
-      <Transcript lines={lines} speakerMapping={speakerMappings} jumpToSeconds={jumpToSeconds} setSeconds={setSeconds}/>
+      {isLoading ? <Spin /> :
+        <React.Fragment>
+          <Video videoId={videoId} seconds={seconds} jump={setJumpToSeconds}/>
+          <Transcript lines={lines} speakerMapping={speakerMappings} jumpToSeconds={jumpToSeconds} setSeconds={setSeconds}/>
+        </React.Fragment>
+      }
     </AppLayout>
   )
 }
