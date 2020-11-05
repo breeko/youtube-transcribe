@@ -7,7 +7,7 @@ const AppHeader: React.FunctionComponent = () => {
   return(
   <Anchor>
     <Header className="white app-header">
-      Youtube Transcribe
+      YTT
     </Header>
   </Anchor>)
 }

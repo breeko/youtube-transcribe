@@ -6,6 +6,9 @@ import AppLayout from "../../../src/AppLayout"
 import Transcript from "../../../src/components/transcript"
 import Video from "../../../src/components/Video"
 import { process } from "../../../src/utils/process"
+import { Typography } from "antd"
+
+const { Paragraph } = Typography
 
 const VideoPage: React.FunctionComponent = () => {
   const [videoId, setVideoId] = React.useState<string | undefined>()
@@ -46,7 +49,11 @@ const VideoPage: React.FunctionComponent = () => {
       {isLoading ? <Spin /> :
         <React.Fragment>
           <Video videoId={videoId} seconds={seconds} jump={setJumpToSeconds}/>
-          <Transcript lines={lines} speakerMapping={speakerMappings} jumpToSeconds={jumpToSeconds} setSeconds={setSeconds}/>
+          {
+            !isLoading && lines.length === 0 ?
+              <Paragraph>Transcript not found</Paragraph> :
+              <Transcript lines={lines} speakerMapping={speakerMappings} jumpToSeconds={jumpToSeconds} setSeconds={setSeconds}/>
+          }
         </React.Fragment>
       }
     </AppLayout>
