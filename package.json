@@ -13,8 +13,10 @@
   "license": "MIT",
   "dependencies": {
     "@aws-amplify/ui-react": "^0.2.27",
+    "@svgr/webpack": "^5.4.0",
     "@types/lodash": "^4.14.164",
     "@types/shortid": "^0.0.29",
+    "@types/unzipper": "^0.10.3",
     "@types/xregexp": "^4.3.0",
     "@zeit/next-css": "^1.0.1",
     "@zeit/next-less": "^1.0.1",
@@ -33,6 +35,7 @@
     "react-icons": "^3.11.0",
     "react-youtube": "^7.13.0",
     "shortid": "^2.2.16",
+    "unzipper": "^0.10.11",
     "webvtt-parser": "^2.1.2",
     "xregexp": "^4.4.0"
   },

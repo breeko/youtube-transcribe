@@ -11,6 +11,7 @@ if (typeof require !== "undefined") {
 
 module.exports = withCSS({
   cssModules: true,
+  
   cssLoaderOptions: {
     importLoaders: 1,
     localIdentName: "[local]___[hash:base64:5]",
@@ -19,6 +20,21 @@ module.exports = withCSS({
     withSass({
       lessLoaderOptions: {
         javascriptEnabled: true,
+      },
+      webpack: (config, { isServer }) => {
+        if (!isServer) {
+          config.node = {
+            fs: "empty",
+            net: "empty",
+            tls: "empty",
+          }
+        }
+        config.module.rules.push({
+          test: /\.svg$/,
+          use: ['@svgr/webpack'],
+        })
+        
+        return config
       },
     })
   ),

@@ -4,6 +4,8 @@ import { Storage } from "aws-amplify"
 import { getMetadata, VideoMetadata } from "../src/utils/apiUtils"
 import { Col, Divider, Row, Space, Typography } from "antd"
 import Link from "next/link"
+import Image from "next/image"
+import { isDefined } from "../src/utils/utils"
 
 const { Title } = Typography
 
@@ -14,11 +16,13 @@ const Main: React.FunctionComponent = () => {
   const fetch = React.useCallback(async () => {
     // const keys = await Storage.list("").then(out => out.map((o: {key: string}) => console.log(o.key)))
     const keys = await Storage.list("").then(out => out.map(async (o: {key: string}) => {
-      const videoId = o.key.replace(/\.json$/, '')
-      return await getMetadata(videoId)
+      const videoId = /^(.+)\/transcript.json.zip$/.exec(o.key)?.[1]
+      if (videoId !== undefined) {
+        return await getMetadata(videoId)
+      }
     }))
     const metas: VideoMetadata[] = await Promise.all(keys)
-    setMetas(metas)
+    setMetas(metas.filter(isDefined))
     setIsLoading(false)
   }, [])
   
@@ -29,7 +33,13 @@ const Main: React.FunctionComponent = () => {
   return(
     <AppLayout>
       <div className="list-videos">
-        <Title>Youtube Transcribe</Title>
+        <Image
+          src="/images/tree-racket.svg"
+          alt="Deep Chats Logo"
+          width={250}
+          height={250}
+        />
+        <Title>Deep Chats</Title>
         <Divider />
         <Title level={3}>Current Videos</Title>
         <Space direction="vertical" >

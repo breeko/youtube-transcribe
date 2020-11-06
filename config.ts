@@ -1,11 +1,11 @@
 export const MY_SEO = {
-  title: 'Youtube Transcribe',
-  description: 'Youtube Transcribe',
+  title: 'Deep Chats',
+  description: 'Transcribed conversations with interesting people',
   openGraph: {
       type: 'website',
       url: '???',
-      title: 'Youtube Transcribe',
-      description: 'Youtube Transcribe',
-      // image: '/steve-varley.jpg',
+      title: 'Deep Chats',
+      description: 'Deep Chats',
+      image: '/images/tree-racket.svg',
   }
 };

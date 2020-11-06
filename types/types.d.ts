@@ -19,3 +19,8 @@ declare module 'youtube-player/dist/types' {
     pauseVideo: () => void
   }
 }
+
+declare module "*.svg" {
+  const content: string
+  export default content
+}
