@@ -1,26 +1,22 @@
-import { Spin } from "antd"
+import { message, Spin } from "antd"
 import { Storage } from "aws-amplify"
 import { useRouter } from "next/dist/client/router"
 import React from "react"
+import unzipper from "unzipper"
 import AppLayout from "../../../src/AppLayout"
 import Transcript from "../../../src/components/transcript"
 import Video from "../../../src/components/video"
 import { process } from "../../../src/utils/process"
-import { Typography } from "antd"
 import { getWordDisplay } from "../../../src/utils/utils"
-import unzipper from "unzipper"
-
-const { Paragraph } = Typography
 
 const VideoPage: React.FunctionComponent = () => {
   const [videoId, setVideoId] = React.useState<string | undefined>()
   const [lines, setLines] = React.useState<Line[]>([])
   const [filteredLines, setFilteredLines] = React.useState<Line[]>([])
-  const [isError, setIsError] = React.useState(false)
   const [search, setSearch] = React.useState<string | undefined>(undefined)
-  const [isLoading, setIsLoading] = React.useState(true)
   const [seconds, setSeconds] = React.useState<number|undefined>()
   const [jumpToSeconds, setJumpToSeconds] = React.useState<number|undefined>()
+  const [isLoading, setIsLoading] = React.useState(true)
 
   const router = useRouter()
 
@@ -35,9 +31,9 @@ const VideoPage: React.FunctionComponent = () => {
           .then(b => unzipper.Open.buffer(Buffer.from(b)))
             .then(dir => dir.files[0]?.buffer()
               .then(d => setLines(process(d.toString())))))
-            .catch(() => setIsError(true)) // failed to parse
-          .catch(() => setIsError(true)) // array buffer failed
-        .catch(() => setIsError(true)) // key doesn't exist
+            .catch(() => message.error("Failed to parse")) // failed to parse
+          .catch(() => message.error("Array buffer failed")) // array buffer failed
+        .catch(() => message.error("Key doesn't exist")) // key doesn't exist
         .finally(() => setIsLoading(false))
     }
   }
@@ -58,26 +54,29 @@ const VideoPage: React.FunctionComponent = () => {
         l.words.map(getWordDisplay).join("").toLowerCase().search(search.toLowerCase()) !== -1)
         setFilteredLines(f)
     }
+    setIsLoading(false)
   }, [search])
-  // const videoId = "_L3gNaAVjQ4"
-  
+
   // TODO: add this to json
   const speakerMappings: {[speaker: string]: string} = {spk_0: "Lex Fridman", spk_1: "George Hotz"}
 
   return(
     <AppLayout>
         <Spin spinning={isLoading} size="large">
-          <Video videoId={videoId} seconds={seconds} jump={setJumpToSeconds} setSearch={setSearch}/>
+          <Video
+            videoId={videoId}
+            seconds={seconds}
+            jump={setJumpToSeconds}
+            setSearch={(s) => setSearch(s)}
+          />
           {
-            !isLoading && false && lines.length === 0 ?
-              <Paragraph>Transcript not found</Paragraph> :
-              <Transcript
-                lines={filteredLines}
-                speakerMapping={speakerMappings}
-                jumpToSeconds={jumpToSeconds}
-                setSeconds={setSeconds}
-                highlightWord={search}
-              />
+            <Transcript
+              lines={filteredLines}
+              speakerMapping={speakerMappings}
+              jumpToSeconds={jumpToSeconds}
+              setSeconds={setSeconds}
+              highlightWord={search}
+            />
           }
         </Spin>
     </AppLayout>

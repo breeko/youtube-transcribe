@@ -13,8 +13,8 @@ interface Word {
 
 declare module 'youtube-player/dist/types' {
   interface YouTubePlayer {
-    getCurrentTime: () => Promise<number>
-    seekTo: (to: number, forward: boolean) => Promise<void>
+    getCurrentTime: () => number // Promise<number>
+    seekTo: (to: number, forward: boolean) => void//Promise<void>
     playVideo: () => void
     pauseVideo: () => void
   }

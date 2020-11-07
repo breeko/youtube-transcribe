@@ -69,22 +69,20 @@ const Sentence: React.FunctionComponent<SentenceProps> = ({ words, highlight, hi
   }, [highlight])
 
   let highlightForward = false
-  let prior = ""
 
   let inner: JSX.Element[] = []
-  const combined = highlight !== undefined ? "" : words.map(getWordDisplay).join("")
+  const combined = words.map(getWordDisplay).join("")
 
   // TODO: Figure out why this is too slow!
   if (highlightWord !== undefined) {
     inner = wrapSearchResults(combined, highlightWord)
   } else if (highlight === undefined) {
-    inner = [<span>{combined}</span>]
+    inner = [<span key="1">{combined}</span>]
   } else {
-    words.forEach(w => {
+    words.forEach((w, idx) => {
       highlightForward = highlightForward || highlight !== undefined && w.start !== undefined && w.start > highlight
       // must set key to random if being highlighted to className is re-applied
-      const key = highlight ? shortid() : w.start?.toString() || prior + w.content
-      prior = key
+      const key = highlight ? shortid() : idx
       inner.push(
         <span key={key} className={highlightForward ? "highlight-fade" : undefined}>
           {getWordDisplay(w)}

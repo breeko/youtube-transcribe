@@ -13,15 +13,14 @@ interface VideoProps {
   setSearch: (s: string) => void
 }
 
-const Video: React.FunctionComponent<VideoProps> = ({ jump, videoId, seconds: seek, setSearch }) => {
-  const ref = React.useRef<YouTube>()
+const Video: React.FunctionComponent<VideoProps> = ({ jump, videoId, seconds, setSearch }) => {
   const [loading, setLoading] = React.useState(true)
   // const [regexEnabled, setRegexEnabled] = React.useState(false)
   const [curSearch, setCurSearch] = React.useState<string>("")
   const [expanded, setExpanded] = React.useState(false)
-  const [seconds, setSeconds] = React.useState(seek || 0)
+  const [curSeconds, setCurSeconds] = React.useState(seconds || 0)
+  const [playing, setPlaying] = React.useState(false)
   const [player, setPlayer] = React.useState<YouTubePlayer | undefined>(undefined)
-  const [playing, setPlaying] = React.useState(seek !== undefined ? true : false)
   const [wide, setWide] = React.useState(true)
   const [size, setSize] = React.useState({width: 640, height: 390})
 
@@ -31,32 +30,17 @@ const Video: React.FunctionComponent<VideoProps> = ({ jump, videoId, seconds: se
     // updates the time
     let interval = null;
     if (playing) {
-      player?.getCurrentTime().then(s => setSeconds(s))
-      interval = setInterval(() => {
-        player?.getCurrentTime().then(s => setSeconds(s))
-      }, 1000);
-    } else if (!playing && seconds !== 0) {
+      interval = setInterval(() => {  
+        const s = player?.getCurrentTime()
+        if (s !== undefined) {
+          setCurSeconds(s)
+        }
+      }, 1000)
+    } else {
       clearInterval(interval);
     }
     return () => clearInterval(interval);
-  }, [playing, seconds]);
-
-  React.useEffect(() => {
-    if (ref.current) {
-      setPlayer(ref.current.getInternalPlayer())
-    }
-  }, [ref.current])
-
-  React.useEffect(() => {
-    if (seek !== undefined) {
-      setLoading(true)
-      player?.seekTo(seek, true)
-        .then(() => setPlaying(true))
-        .finally(() => setLoading(false))
-    } else {
-      setLoading(false)
-    }
-  }, [player, seek])
+  }, [playing])
 
 
   React.useEffect(() => {
@@ -67,21 +51,30 @@ const Video: React.FunctionComponent<VideoProps> = ({ jump, videoId, seconds: se
     }
   }, [playing, player])
 
-  React.useEffect(() => {
-    const updateSize = () => {
-      const w = window.innerWidth >= 851
-      setWide(w)
-      const width = Math.min(window.innerWidth - 80, 640)
-      const height = Math.floor(width / 1.64)
-      if (width != size.width) {
-        setSize({width, height})
-      }
+  const updateSize = React.useCallback(() => {
+    const w = window.innerWidth >= 1090
+    setWide(w)
+    const width = Math.min(window.innerWidth - 80, 640)
+    const height = Math.floor(width / 1.64)
+    if (width != size.width) {
+      setSize({width, height})
     }
+  }, [])
+
+  React.useEffect(() => {
+    if (seconds !== undefined) {
+      // TODO: this doesn't work when video first loaded, not played yet and someone seeks
+      player.seekTo(seconds, true)
+      setPlaying(true)
+    }
+  }, [seconds])
+
+  React.useEffect(() => {
+
     window.addEventListener('resize', updateSize)
     updateSize()
     return () => window.removeEventListener('resize', updateSize)
   }, [])
-
 
   const handleSearch = () => {
     if (curSearch.length >= MIN_SEARCH_LENGTH) {
@@ -93,78 +86,76 @@ const Video: React.FunctionComponent<VideoProps> = ({ jump, videoId, seconds: se
     }
   }
   
-  const handleForward = (direction: "forward" | "backward") => {
+  const handleForward = React.useCallback((direction: "forward" | "backward") => {
     setLoading(true)
     switch(direction) {
       case "forward":
-        player.seekTo(seconds + 15, true).then(() => setPlaying(true)).finally(() => setLoading(false))
+        player?.seekTo(curSeconds + 15, true)
+        setCurSeconds(p => p + 15)
+        setLoading(false)
         break
       case "backward":
-        player.seekTo(seconds - 15, true).then(()=> setPlaying(true)).finally(() => setLoading(false))
+        setCurSeconds(p => p - 15)
+        player?.seekTo(curSeconds - 15, true)
+        setLoading(false)
         break
     }
-  }
-  
+  }, [curSeconds])
+
   return(
-    <Spin spinning={loading}>
-      <Anchor offsetTop={64} className="video-collapsed-anchor">
-        <div className="video-collapsed-container">
-            <div className={wide ? "left" : "undefined"}>
-              {loading ? <Spin /> : parseSeconds(seconds)}
-              <Divider type="vertical"/>
-              <Space direction="horizontal">
-                {expanded ?
-                  <Tooltip title="Hide video" placement="bottom">
-                    <FiMinimize2 onClick={() => setExpanded(false)} />
-                  </Tooltip> :
-                  <Tooltip title="Show video" placement="bottom">
-                    <FiMaximize2 onClick={() => setExpanded(true)} />
-                  </Tooltip>
-                  }
-                <Tooltip title="-15 sec" placement="bottom">
-                  <FiRewind onClick={() => handleForward("backward")}/>
+    <Anchor offsetTop={64} className="video-collapsed-anchor">
+      <div className="video-collapsed-container">
+            {parseSeconds(curSeconds)}
+            <Divider type="vertical"/>
+              <Space direction="horizontal" >
+              {expanded ?
+                <Tooltip title="Hide video" placement="bottom" mouseEnterDelay={1}>
+                  <FiMinimize2 onClick={() => setExpanded(false)} />
+                </Tooltip> :
+                <Tooltip title="Show video" placement="bottom" mouseEnterDelay={1}>
+                  <FiMaximize2 onClick={() => setExpanded(true)} />
                 </Tooltip>
-                {playing ?
-                  <Tooltip title="Pause" placement="bottom">
-                    <FiPause onClick={() => setPlaying(false)}/>
-                  </Tooltip> :
-                  <Tooltip title="Play" placement="bottom">
-                    <FiPlay onClick={() => setPlaying(true)}/>
-                  </Tooltip>
                 }
-                <Tooltip title="+15 sec" placement="bottom">
-                  <FiFastForward onClick={() => handleForward("forward")}/>
+              <Tooltip title="-15 sec" placement="bottom" mouseEnterDelay={1}>
+                <FiRewind onClick={() => handleForward("backward")}/>
+              </Tooltip>
+              {playing ?
+                <Tooltip title="Pause" placement="bottom" mouseEnterDelay={1}>
+                  <FiPause onClick={() => setPlaying(false)}/>
+                </Tooltip> :
+                <Tooltip title="Play" placement="bottom" mouseEnterDelay={1}>
+                  <FiPlay onClick={() => setPlaying(true)}/>
                 </Tooltip>
-                <Tooltip title="Jump to Text" placement="bottom">
-                  <FiCrosshair onClick={() => jump(seconds)}/>
-                </Tooltip>
+              }
+              <Tooltip title="+15 sec" placement="bottom" mouseEnterDelay={1}>
+                <FiFastForward onClick={() => handleForward("forward")}/>
+              </Tooltip>
+              <Tooltip title="Jump to Text" placement="bottom" mouseEnterDelay={1}>
+                <FiCrosshair onClick={() => { jump(curSeconds)} } />
+              </Tooltip>
               </Space>
-            </div>
-            <div style={{display: expanded ? "inherit" : "none"}} className={wide ? "right" : "left"}>
-              <YouTube opts={{height: `${size.height}`, width: `${size.width}`}} ref={ref} videoId={videoId} />
-            </div>
-            <div className={expanded ? "left" : "right"}>
-              <Space direction="horizontal">
-                <div className="flex-col">
-                  <Search
-                    placeholder="Search"
-                    size="large"
-                    className="search-input"
-                    value={curSearch}
-                    onChange={s => setCurSearch(s.target.value)}
-                    onPressEnter={() => handleSearch()}
-                  />
-                </div>
-                {/* <Tooltip title="Regex" placement="bottom">
-                  <VscRegex className={regexEnabled ? undefined : "faded"} onClick={() => setRegexEnabled(p => !p)}/>
-                </Tooltip> */}
-                &nbsp; {/* hack to make items align */}
-              </Space>
-            </div>
+              <Divider type="vertical"/>
+              <Search
+                placeholder="Search"
+                size="large"
+                className="search-input"
+                value={curSearch}
+                onChange={s => setCurSearch(s.target.value)}
+                onPressEnter={() => handleSearch()} />
+          
+          {/* <Tooltip title="Regex" placement="bottom">
+            <VscRegex className={regexEnabled ? undefined : "faded"} onClick={() => setRegexEnabled(p => !p)}/>
+          </Tooltip> */}
           </div>
-      </Anchor>
-    </Spin>
+          <div style={{display: expanded ? "inherit" : "none"}} className={wide ? "right" : "left"}>
+            <YouTube
+              onReady={t => {setPlayer(t.target); setLoading(false)}}
+              opts={{height: `${size.height}`, width: `${size.width}`}}
+              videoId={videoId}
+            />
+          </div>
+    </Anchor>
   )
 }
 
-export default Video
+export default React.memo(Video, (a, b) => a.videoId === b.videoId && a.seconds === b.seconds)

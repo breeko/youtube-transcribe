@@ -15,8 +15,8 @@ interface TranscriptProps {
   highlightWord: string | undefined
 }
 
-const Transcript: React.FunctionComponent<TranscriptProps> = ({ jumpToSeconds, setSeconds, lines, speakerMapping, highlightWord }) => {
-
+const Transcript: React.FunctionComponent<TranscriptProps> = (props) => {
+  const { jumpToSeconds, setSeconds, lines, speakerMapping, highlightWord } = props
   const firstSpeaker = _.min(Object.keys(speakerMapping))
   const jumpStart = lines.find(l => l.endTime > jumpToSeconds)?.startTime
 
