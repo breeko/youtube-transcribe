@@ -6,10 +6,12 @@ import unzipper from "unzipper"
 import AppLayout from "../../../src/AppLayout"
 import Transcript from "../../../src/components/transcript"
 import Video from "../../../src/components/video"
+import { getMetadata } from "../../../src/utils/apiUtils"
 import { process } from "../../../src/utils/process"
 import { getWordDisplay } from "../../../src/utils/utils"
 
 const VideoPage: React.FunctionComponent = () => {
+  const [meta, setMeta] = React.useState<VideoMetadata>()
   const [videoId, setVideoId] = React.useState<string | undefined>()
   const [lines, setLines] = React.useState<Line[]>([])
   const [filteredLines, setFilteredLines] = React.useState<Line[]>([])
@@ -26,6 +28,7 @@ const VideoPage: React.FunctionComponent = () => {
     if (typeof video === "string") {
       setVideoId(video)
       const storageKey = `${video}/transcript.json.zip`
+      const metaKey = `${video}/meta.json`
       Storage.get(storageKey, { download: true} )
         .then((source: { Body: Blob }) => source.Body.arrayBuffer()
           .then(b => unzipper.Open.buffer(Buffer.from(b)))
@@ -35,8 +38,20 @@ const VideoPage: React.FunctionComponent = () => {
           .catch(() => message.error("Array buffer failed")) // array buffer failed
         .catch(() => message.error("Key doesn't exist")) // key doesn't exist
         .finally(() => setIsLoading(false))
+
+        Storage.get(metaKey, {download: true})
+          .then((source: { Body: Blob }) => source.Body.text())
+            .then(m => setMeta(JSON.parse(m)))
+            .catch(() => message.error("Failed to parse metadata"))
+          .catch(() => message.error("Failed to get metadata"))
     }
   }
+
+  React.useEffect(() => {
+    if (videoId) {
+      getMetadata(videoId).then(m => document.title = `Deep Chats: ${m.title}`)
+    }
+  }, [videoId])
 
   React.useEffect(() => {
     setFilteredLines(lines)
@@ -57,28 +72,23 @@ const VideoPage: React.FunctionComponent = () => {
     setIsLoading(false)
   }, [search])
 
-  // TODO: add this to json
-  const speakerMappings: {[speaker: string]: string} = {spk_0: "Lex Fridman", spk_1: "George Hotz"}
-
   return(
-    <AppLayout>
-        <Spin spinning={isLoading} size="large">
-          <Video
-            videoId={videoId}
-            seconds={seconds}
-            jump={setJumpToSeconds}
-            setSearch={(s) => setSearch(s)}
-          />
-          {
-            <Transcript
-              lines={filteredLines}
-              speakerMapping={speakerMappings}
-              jumpToSeconds={jumpToSeconds}
-              setSeconds={setSeconds}
-              highlightWord={search}
-            />
-          }
-        </Spin>
+    <AppLayout showFooter={false}>
+      <Spin spinning={isLoading} size="large">
+        <Transcript
+          lines={filteredLines}
+          speakerMapping={meta?.speakerMapping || {}}
+          jumpToSeconds={jumpToSeconds}
+          setSeconds={setSeconds}
+          highlightWord={search}
+        />
+        <Video
+          videoId={videoId}
+          seconds={seconds}
+          jump={setJumpToSeconds}
+          setSearch={(s) => setSearch(s)}
+        />
+      </Spin>
     </AppLayout>
   )
 }

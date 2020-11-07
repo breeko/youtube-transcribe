@@ -11,6 +11,10 @@ interface Word {
   end?: number
 }
 
+interface VideoMetadata {
+  speakerMapping?: {[speaker: string]: string}
+}
+
 declare module 'youtube-player/dist/types' {
   interface YouTubePlayer {
     getCurrentTime: () => number // Promise<number>
