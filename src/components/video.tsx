@@ -1,7 +1,9 @@
 import { Anchor, Divider, Drawer, message, Space, Spin, Tooltip } from "antd"
+import Avatar from "antd/lib/avatar/avatar"
 import Search from "antd/lib/input/Search"
+import Link from "next/link"
 import React from "react"
-import { FiCrosshair, FiFastForward, FiMaximize2, FiMinimize2, FiPause, FiPlay, FiRewind, FiSearch, FiTrash2, FiX } from "react-icons/fi"
+import { FiCrosshair, FiFastForward, FiHome, FiMaximize2, FiMinimize2, FiPause, FiPlay, FiRewind, FiSearch, FiTrash2, FiX } from "react-icons/fi"
 import YouTube from "react-youtube"
 import { YouTubePlayer } from "youtube-player/dist/types"
 import { parseSeconds } from "../utils/timeUtils"
@@ -63,7 +65,6 @@ const Video: React.FunctionComponent<VideoProps> = ({ jump, videoId, seconds, se
     if (seconds !== undefined) {
       // TODO: this doesn't work when video first loaded, not played yet and someone seeks
       setPlaying(true)
-      // player?.playVideo()
       setTimeout(() => {
         player?.seekTo(seconds, true)
       }, 500)
@@ -101,30 +102,35 @@ const Video: React.FunctionComponent<VideoProps> = ({ jump, videoId, seconds, se
   }, [curSeconds])
 
   return(
-    <React.Fragment>
+    <div className="video-collapsed-row" >
       {/* must set style here because it doesn't work in less */}
-      <div className="video-collapsed-container" style={{fontSize: "min(7vw, 36px)"}}>
+      <div className="video-collapsed-container" style={{fontSize: "min(6vw, 36px)"}}>
       {showSearch ?
-        <Space direction="horizontal">
+        <React.Fragment>
+          &nbsp;
           <Search
             placeholder="Search"
-            size="large"
+
             className="search-input"
             value={curSearch}
             onChange={s => setCurSearch(s.target.value)}
-            onPressEnter={() => handleSearch()} />
+            onPressEnter={() => handleSearch()}
+          />
           <FiTrash2
             className={curSearch === "" ? "faded" : undefined}
             onClick={() => { setCurSearch(""); setSearch(undefined) }}
           />
           <FiX onClick={() => setShowSearch(false)}/>
-        </Space> :
+        </React.Fragment> :
         <React.Fragment>
+          <Link href="/">
+            <FiHome />
+          </Link>
+          <Divider type="vertical" />
           <span>
             {parseSeconds(curSeconds)}
           </span>
-          <Divider type="vertical"/>
-          <Space direction="horizontal" >
+          <Divider type="vertical" />
           { expanded ?
             <FiMinimize2 onClick={() => setExpanded(false)} /> :
             <FiMaximize2 onClick={() => setExpanded(true)} />
@@ -137,7 +143,6 @@ const Video: React.FunctionComponent<VideoProps> = ({ jump, videoId, seconds, se
           <FiFastForward onClick={() => handleForward("forward")} />
           <FiCrosshair onClick={() => { jump(curSeconds)} } />
           <FiSearch onClick={() => setShowSearch(true)} />
-          </Space>
         </React.Fragment>
         }
         </div>
@@ -148,7 +153,7 @@ const Video: React.FunctionComponent<VideoProps> = ({ jump, videoId, seconds, se
           videoId={videoId}
         />
       </div>
-    </React.Fragment>
+    </div>
   )
 }
 

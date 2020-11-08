@@ -1,12 +1,11 @@
+import { Col, Divider, Row, Space, Spin, Typography } from "antd"
+import { Storage } from "aws-amplify"
+import Image from "next/image"
+import Link from "next/link"
 import React from "react"
 import AppLayout from "../src/AppLayout"
-import { Storage } from "aws-amplify"
 import { getMetadata, VideoMetadata } from "../src/utils/apiUtils"
-import { Col, Divider, Row, Space, Spin, Typography } from "antd"
-import Link from "next/link"
-import Image from "next/image"
 import { isDefined } from "../src/utils/utils"
-import DeepChat from "../public/images/tree-racket.svg"
 
 const { Title } = Typography
 
@@ -35,7 +34,7 @@ const Main: React.FunctionComponent = () => {
     <AppLayout>
       <div className="list-videos">
         <Image
-          src={"/images/tree-racket.svg"}
+          src={"/tree-racket.svg"}
           alt="Deep Chats Logo"
           width={250}
           height={250}

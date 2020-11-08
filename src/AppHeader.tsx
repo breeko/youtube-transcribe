@@ -14,7 +14,7 @@ const AppHeader: React.FunctionComponent = () => {
         <Link href="/">
           <a className="white">
             <Space direction="horizontal">  
-              <Avatar src="/images/tree-racket.svg" />
+              <Avatar src="/tree-racket.svg" />
               {/* TODO: add title and make it look good */}
               <span className="white">&nbsp;Deep Chats</span>
             </Space>
