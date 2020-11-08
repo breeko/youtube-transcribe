@@ -69,7 +69,6 @@ const VideoPage: React.FunctionComponent = () => {
         l.words.map(getWordDisplay).join("").toLowerCase().search(search.toLowerCase()) !== -1)
         setFilteredLines(f)
     }
-    setIsLoading(false)
   }, [search])
 
   return(

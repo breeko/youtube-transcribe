@@ -26,11 +26,9 @@ const Transcript: React.FunctionComponent<TranscriptProps> = (props) => {
         {lines.map(({speaker, startTime, words}) =>
           <Row key={`${speaker}${startTime}`}>
             <Col xs={24} md={8}>
-              <Paragraph className="pointer">
-                <div onClick={() => setSeconds(startTime)}>
-                  [{parseSeconds(startTime)}]: {speakerMapping[speaker] || speaker}
-                </div>
-              </Paragraph>
+              <div onClick={() => setSeconds(startTime)} className="pointer">
+                [{parseSeconds(startTime)}]: {speakerMapping[speaker] || speaker}
+              </div>
             </Col>
             <Col
               xs={24} md={16}

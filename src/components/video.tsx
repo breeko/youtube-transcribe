@@ -1,7 +1,7 @@
-import { Anchor, Divider, message, Space, Spin, Tooltip } from "antd"
+import { Anchor, Divider, Drawer, message, Space, Spin, Tooltip } from "antd"
 import Search from "antd/lib/input/Search"
 import React from "react"
-import { FiCrosshair, FiFastForward, FiMaximize2, FiMinimize2, FiPause, FiPlay, FiRewind } from "react-icons/fi"
+import { FiCrosshair, FiFastForward, FiMaximize2, FiMinimize2, FiPause, FiPlay, FiRewind, FiSearch, FiTrash2, FiX } from "react-icons/fi"
 import YouTube from "react-youtube"
 import { YouTubePlayer } from "youtube-player/dist/types"
 import { parseSeconds } from "../utils/timeUtils"
@@ -15,6 +15,7 @@ interface VideoProps {
 
 const Video: React.FunctionComponent<VideoProps> = ({ jump, videoId, seconds, setSearch }) => {
   const [isLoading, setIsLoading] = React.useState(true)
+  const [showSearch, setShowSearch] = React.useState(false)
   const [curSearch, setCurSearch] = React.useState<string>("")
   const [expanded, setExpanded] = React.useState(false)
   const [curSeconds, setCurSeconds] = React.useState(seconds || 0)
@@ -83,7 +84,7 @@ const Video: React.FunctionComponent<VideoProps> = ({ jump, videoId, seconds, se
     return () => window.removeEventListener('resize', updateSize)
   }, [])
 
-  const handleSearch = () => {
+  const handleSearch = (search?: string) => {
     if (curSearch.length >= MIN_SEARCH_LENGTH) {
       setSearch(curSearch)
     } else if (curSearch === "") {
@@ -107,45 +108,57 @@ const Video: React.FunctionComponent<VideoProps> = ({ jump, videoId, seconds, se
   }, [curSeconds])
 
   return(
-    <div>
-      <div className="video-collapsed-container">
+    <React.Fragment>
+      {/* must set style here because it doesn't work in less */}
+      <div className="video-collapsed-container" style={{fontSize: "min(7vw, 36px)"}}>
+      {showSearch ?
+        <Space direction="horizontal">
+          <Search
+          placeholder="Search"
+          size="large"
+          className="search-input"
+          value={curSearch}
+          onChange={s => setCurSearch(s.target.value)}
+          onPressEnter={() => handleSearch()} />
+          <FiTrash2
+            className={curSearch === "" ? "faded" : undefined}
+            onClick={() => { setCurSearch(""); setSearch(undefined) }}
+          />
+          <FiX onClick={() => setShowSearch(false)}/>
+        </Space> :
+        <React.Fragment>
+          <span>
             {parseSeconds(curSeconds)}
-            {
-              !isLoading &&
-              <React.Fragment>
-                <Divider type="vertical"/>
-                  <Space direction="horizontal" >
-                  { expanded ?
-                      <FiMinimize2 onClick={() => setExpanded(false)} /> :
-                      <FiMaximize2 onClick={() => setExpanded(true)} />
-                  }
-                  <FiRewind onClick={() => handleForward("backward")} />
-                  {playing ?
-                      <FiPause onClick={() => setPlaying(false)}/> :
-                      <FiPlay onClick={() => setPlaying(true)}/>
-                  }
-                  <FiFastForward onClick={() => handleForward("forward")}/>
-                  <FiCrosshair onClick={() => { jump(curSeconds)} } />
-                  </Space>
-                  <Divider type="vertical"/>
-                  <Search
-                    placeholder="Search"
-                    size="large"
-                    className="search-input"
-                    value={curSearch}
-                    onChange={s => setCurSearch(s.target.value)}
-                    onPressEnter={() => handleSearch()} />
-                </React.Fragment>
-            }
-          </div>
-          <div style={{display: expanded ? "inherit" : "none"}} ref={ref}>
-            <YouTube
-              onReady={t => {setPlayer(t.target); setIsLoading(false)}}
-              opts={{height: `${size.height}`, width: `${size.width}`}}
-              videoId={videoId}
-            />
-          </div>
-    </div>
+          </span>
+          <Divider type="vertical"/>
+          {
+            !isLoading &&
+              <Space direction="horizontal" >
+              { expanded ?
+                <FiMinimize2 onClick={() => setExpanded(false)} /> :
+                <FiMaximize2 onClick={() => setExpanded(true)} />
+              }
+              <FiRewind onClick={() => handleForward("backward")} />
+              {playing ?
+                <FiPause onClick={() => setPlaying(false)}/> :
+                <FiPlay onClick={() => setPlaying(true)}/>
+              }
+              <FiFastForward onClick={() => handleForward("forward")} />
+              <FiCrosshair onClick={() => { jump(curSeconds)} } />
+              <FiSearch onClick={() => setShowSearch(true)} />
+              </Space>
+          }
+          </React.Fragment>
+        }
+        </div>
+      <div style={{display: expanded ? "inherit" : "none"}} ref={ref}>
+        <YouTube
+          onReady={t => {setPlayer(t.target); setIsLoading(false)}}
+          opts={{height: `${size.height}`, width: `${size.width}`}}
+          videoId={videoId}
+        />
+      </div>
+    </React.Fragment>
   )
 }
 

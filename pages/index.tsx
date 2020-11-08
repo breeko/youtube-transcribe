@@ -6,6 +6,7 @@ import { Col, Divider, Row, Space, Typography } from "antd"
 import Link from "next/link"
 import Image from "next/image"
 import { isDefined } from "../src/utils/utils"
+import DeepChat from "../public/images/tree-racket.svg"
 
 const { Title } = Typography
 
@@ -34,7 +35,7 @@ const Main: React.FunctionComponent = () => {
     <AppLayout>
       <div className="list-videos">
         <Image
-          src="/images/tree-racket.svg"
+          src={"/images/tree-racket.png"}
           alt="Deep Chats Logo"
           width={250}
           height={250}

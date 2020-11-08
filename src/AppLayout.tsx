@@ -11,7 +11,7 @@ interface AppLayoutProps {
 
 const AppLayout: React.FunctionComponent<AppLayoutProps> = (props) => {
   return(
-    <Layout>
+    <Layout className="app-layout">
       <AppHeader />
       <Content className="app-content">
         {props.children}

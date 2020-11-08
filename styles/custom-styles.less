@@ -8,12 +8,17 @@
 @yellow: #ffff99;
 
 .white {
-  color: #fff;
+  color: @white;
+}
+
+.app-layout {
+  background-color: @dark-blue;
 }
 
 .app-content {
   min-height: calc(100vh - 128px);
   padding: 10px;
+  background-color: white;
 }
 
 .app-header {
@@ -64,9 +69,9 @@
 }
 
 .video-collapsed-container {
-  font-size: 36px;
-  padding: 10px;
-  min-height: 72px;
+  text-align: center;
+  border-style: solid;
+  min-height: 64px;
   svg > {
     cursor: pointer;
   }
@@ -90,8 +95,9 @@
 }
 
 .search-input {
-  width: 300px;
-  max-width: calc(100vw - 70px;);
+  width: 350px;
+  max-width: calc(100vw - 100px;);
+  padding-top: 10px;
 }
 
 .italics {
