@@ -16,49 +16,46 @@
 }
 
 .app-content {
-  min-height: calc(100vh - 128px);
+  min-height: calc(100vh - 112px);
   padding: 10px;
   background-color: white;
 }
 
 .app-header {
-  padding-left: 20px;
-  padding-right: 20px;
-  height: 64px;
+  text-align: left;
+  padding-left: 10px;
+  padding-right: 10px;
+  max-height: 10vh;
   width: 100vw;
-  font-size: 30px;
+  font-size: 24px;
   background-color: @dark-blue;
+  z-index: 1;
+  box-shadow: 0px 0px 5px 5px rgba(41,41,41,0.15);
 }
 
 .app-footer {
-  height: 64px;
+  padding: 10px;
   text-align: center;
   background-color: @dark-blue;
 }
 
 .list-videos {
   align-items: center;
+  text-align: center;
   display: flex;
   flex-direction: column;
   font-size: large;
 }
 
-.pointer {
-  cursor: pointer;
-  :hover {
-    font-weight: bold;
-    // font-size: 20px;
-  }
-}
-
 .transcript-container {
-  max-width: 1095px;
+  max-width: 960px;
   align-items: center;
-  margin: 1.2rem;
+  margin: 10px;
+  margin-top: 5px;
   line-height: 1.6;
   font-size: 18px;
   color: @dark-grey;
-  height: calc(100vh - 180px);
+  height: 83vh;
   overflow: scroll;
 }
 
@@ -71,7 +68,7 @@
 .video-collapsed-container {
   text-align: center;
   border-style: solid;
-  min-height: 64px;
+  max-height: 10vh;
   svg > {
     cursor: pointer;
   }

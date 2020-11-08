@@ -14,14 +14,12 @@ interface VideoProps {
 }
 
 const Video: React.FunctionComponent<VideoProps> = ({ jump, videoId, seconds, setSearch }) => {
-  const [isLoading, setIsLoading] = React.useState(true)
   const [showSearch, setShowSearch] = React.useState(false)
   const [curSearch, setCurSearch] = React.useState<string>("")
   const [expanded, setExpanded] = React.useState(false)
   const [curSeconds, setCurSeconds] = React.useState(seconds || 0)
   const [playing, setPlaying] = React.useState(false)
   const [player, setPlayer] = React.useState<YouTubePlayer | undefined>(undefined)
-  const [wide, setWide] = React.useState(true)
   const [size, setSize] = React.useState({width: 480, height: 292 })
 
   const ref = React.useRef<HTMLDivElement>(null)
@@ -54,33 +52,28 @@ const Video: React.FunctionComponent<VideoProps> = ({ jump, videoId, seconds, se
   }, [playing, player])
 
   const updateSize = React.useCallback(() => {
-    const w = window.innerWidth >= 1090
-    setWide(w)
     const width = Math.min(window.innerWidth - 20, 480)
     const height = Math.floor(width / 1.64)
-    if (width != size.width) {
+    if (width !== size.width || height !== size.height) {
       setSize({width, height})
     }
   }, [])
 
   React.useEffect(() => {
-    if (ref.current) {
-      ref.current.scrollIntoView()
-    }
-  }, [expanded])
-
-  React.useEffect(() => {
     if (seconds !== undefined) {
       // TODO: this doesn't work when video first loaded, not played yet and someone seeks
-      player?.seekTo(seconds, true)
       setPlaying(true)
+      // player?.playVideo()
+      setTimeout(() => {
+        player?.seekTo(seconds, true)
+      }, 500)
     }
   }, [seconds])
 
   React.useEffect(() => {
 
     window.addEventListener('resize', updateSize)
-    updateSize()
+    // updateSize()
     return () => window.removeEventListener('resize', updateSize)
   }, [])
 
@@ -114,12 +107,12 @@ const Video: React.FunctionComponent<VideoProps> = ({ jump, videoId, seconds, se
       {showSearch ?
         <Space direction="horizontal">
           <Search
-          placeholder="Search"
-          size="large"
-          className="search-input"
-          value={curSearch}
-          onChange={s => setCurSearch(s.target.value)}
-          onPressEnter={() => handleSearch()} />
+            placeholder="Search"
+            size="large"
+            className="search-input"
+            value={curSearch}
+            onChange={s => setCurSearch(s.target.value)}
+            onPressEnter={() => handleSearch()} />
           <FiTrash2
             className={curSearch === "" ? "faded" : undefined}
             onClick={() => { setCurSearch(""); setSearch(undefined) }}
@@ -131,29 +124,26 @@ const Video: React.FunctionComponent<VideoProps> = ({ jump, videoId, seconds, se
             {parseSeconds(curSeconds)}
           </span>
           <Divider type="vertical"/>
-          {
-            !isLoading &&
-              <Space direction="horizontal" >
-              { expanded ?
-                <FiMinimize2 onClick={() => setExpanded(false)} /> :
-                <FiMaximize2 onClick={() => setExpanded(true)} />
-              }
-              <FiRewind onClick={() => handleForward("backward")} />
-              {playing ?
-                <FiPause onClick={() => setPlaying(false)}/> :
-                <FiPlay onClick={() => setPlaying(true)}/>
-              }
-              <FiFastForward onClick={() => handleForward("forward")} />
-              <FiCrosshair onClick={() => { jump(curSeconds)} } />
-              <FiSearch onClick={() => setShowSearch(true)} />
-              </Space>
+          <Space direction="horizontal" >
+          { expanded ?
+            <FiMinimize2 onClick={() => setExpanded(false)} /> :
+            <FiMaximize2 onClick={() => setExpanded(true)} />
           }
-          </React.Fragment>
+          <FiRewind onClick={() => handleForward("backward")} />
+          {playing ?
+            <FiPause onClick={() => setPlaying(false)}/> :
+            <FiPlay onClick={() => setPlaying(true)}/>
+          }
+          <FiFastForward onClick={() => handleForward("forward")} />
+          <FiCrosshair onClick={() => { jump(curSeconds)} } />
+          <FiSearch onClick={() => setShowSearch(true)} />
+          </Space>
+        </React.Fragment>
         }
         </div>
       <div style={{display: expanded ? "inherit" : "none"}} ref={ref}>
         <YouTube
-          onReady={t => {setPlayer(t.target); setIsLoading(false)}}
+          onReady={t => setPlayer(t.target)}
           opts={{height: `${size.height}`, width: `${size.width}`}}
           videoId={videoId}
         />

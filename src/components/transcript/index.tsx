@@ -1,4 +1,4 @@
-import { Col, Divider, Row, Typography } from "antd"
+import { Button, Col, Divider, Row, Typography } from "antd"
 import _ from "lodash"
 import React from "react"
 import { parseSeconds } from "../../utils/timeUtils"
@@ -25,13 +25,14 @@ const Transcript: React.FunctionComponent<TranscriptProps> = (props) => {
       <div className="transcript-container">
         {lines.map(({speaker, startTime, words}) =>
           <Row key={`${speaker}${startTime}`}>
-            <Col xs={24} md={8}>
-              <div onClick={() => setSeconds(startTime)} className="pointer">
+            <Col xs={24} md={6}>
+              {/* Add random so that it re-renders state even if originally set */}
+              <Button type="link" onClick={() => setSeconds(startTime + Math.random() / 100)}>
                 [{parseSeconds(startTime)}]: {speakerMapping[speaker] || speaker}
-              </div>
+              </Button>
             </Col>
             <Col
-              xs={24} md={16}
+              xs={24} md={18}
               className={firstSpeaker === speaker ? "" : "italics" }
             >
               <Sentence

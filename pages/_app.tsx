@@ -8,7 +8,7 @@ import Amplify from "aws-amplify";
 import Head from 'next/head'
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
-  Amplify.configure({...awsconfig})
+  Amplify.configure({...awsconfig, ssr: true})
 
   return   <>
     <Head>

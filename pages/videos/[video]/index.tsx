@@ -72,20 +72,20 @@ const VideoPage: React.FunctionComponent = () => {
   }, [search])
 
   return(
-    <AppLayout showFooter={false}>
+    <AppLayout hideFooter={true} hideHeader={true}>
       <Spin spinning={isLoading} size="large">
+        <Video
+          videoId={videoId}
+          seconds={seconds}
+          jump={setJumpToSeconds}
+          setSearch={(s) => setSearch(s)}
+        />
         <Transcript
           lines={filteredLines}
           speakerMapping={meta?.speakerMapping || {}}
           jumpToSeconds={jumpToSeconds}
           setSeconds={setSeconds}
           highlightWord={search}
-        />
-        <Video
-          videoId={videoId}
-          seconds={seconds}
-          jump={setJumpToSeconds}
-          setSearch={(s) => setSearch(s)}
         />
       </Spin>
     </AppLayout>

@@ -10,19 +10,18 @@ const { Header } = Layout
 
 const AppHeader: React.FunctionComponent = () => {
   return(
-  <Anchor>
-    <Header className="app-header">
-      <Link href="/">
-        <a className="white">
-          <Space direction="horizontal">  
-            <Avatar src="/images/tree-racket.svg" />
-            {/* TODO: add title and make it look good */}
-            <span className="white">&nbsp;Deep Chats</span>
-          </Space>
-        </a>
-      </Link>
-    </Header>
-  </Anchor>)
+      <Header className="app-header">
+        <Link href="/">
+          <a className="white">
+            <Space direction="horizontal">  
+              <Avatar src="/images/tree-racket.svg" />
+              {/* TODO: add title and make it look good */}
+              <span className="white">&nbsp;Deep Chats</span>
+            </Space>
+          </a>
+        </Link>
+      </Header>
+    )
 }
 
 export default AppHeader

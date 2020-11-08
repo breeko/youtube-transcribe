@@ -1,12 +1,9 @@
 import React from "react"
-import AppLayout from "../../src/AppLayout"
+import Main from ".."
 
 const VideoListPage: React.FunctionComponent = () => {
-  return(
-    <AppLayout>
-      Fill me out
-    </AppLayout>
-  )
+
+  return <Main />
 }
 
 export default VideoListPage

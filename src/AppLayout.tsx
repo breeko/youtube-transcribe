@@ -6,17 +6,18 @@ import AppHeader from "./AppHeader"
 const { Content } = Layout
 
 interface AppLayoutProps {
-  showFooter?: boolean
+  hideFooter?: boolean
+  hideHeader?: boolean
 }
 
 const AppLayout: React.FunctionComponent<AppLayoutProps> = (props) => {
   return(
     <Layout className="app-layout">
-      <AppHeader />
+      {props.hideHeader ? null : <AppHeader />}
       <Content className="app-content">
         {props.children}
       </Content>
-      { props.showFooter === false ? null : <AppFooter />}
+      { props.hideFooter ? null : <AppFooter />}
     </Layout>
   )
 }

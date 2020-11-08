@@ -2,7 +2,7 @@ import React from "react"
 import AppLayout from "../src/AppLayout"
 import { Storage } from "aws-amplify"
 import { getMetadata, VideoMetadata } from "../src/utils/apiUtils"
-import { Col, Divider, Row, Space, Typography } from "antd"
+import { Col, Divider, Row, Space, Spin, Typography } from "antd"
 import Link from "next/link"
 import Image from "next/image"
 import { isDefined } from "../src/utils/utils"
@@ -11,7 +11,7 @@ import DeepChat from "../public/images/tree-racket.svg"
 const { Title } = Typography
 
 const Main: React.FunctionComponent = () => {
-  const [isLoading, setIsLoading] = React.useState(false)
+  const [isLoading, setIsLoading] = React.useState(true)
   const [metas, setMetas] = React.useState<VideoMetadata[]>([])
 
   const fetch = React.useCallback(async () => {
@@ -35,14 +35,16 @@ const Main: React.FunctionComponent = () => {
     <AppLayout>
       <div className="list-videos">
         <Image
-          src={"/images/tree-racket.png"}
+          src={"/images/tree-racket.svg"}
           alt="Deep Chats Logo"
           width={250}
           height={250}
         />
         <Title>Deep Chats</Title>
         <Divider />
-        <Title level={3}>Current Videos</Title>
+        <Spin spinning={isLoading}>
+          <Title level={3}>Latest Videos</Title>
+        </Spin>
         <Space direction="vertical" >
           {metas.map(m => {
             const pathname = `videos/${m.video_details.videoId}`
