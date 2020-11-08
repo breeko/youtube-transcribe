@@ -110,7 +110,6 @@ const Video: React.FunctionComponent<VideoProps> = ({ jump, videoId, seconds, se
           &nbsp;
           <Search
             placeholder="Search"
-
             className="search-input"
             value={curSearch}
             onChange={s => setCurSearch(s.target.value)}
@@ -150,6 +149,8 @@ const Video: React.FunctionComponent<VideoProps> = ({ jump, videoId, seconds, se
         <YouTube
           onReady={t => setPlayer(t.target)}
           opts={{height: `${size.height}`, width: `${size.width}`}}
+          onPlay={() => setPlaying(true)}
+          onPause={() => setPlaying(false)}
           videoId={videoId}
         />
       </div>
