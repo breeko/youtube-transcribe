@@ -30,7 +30,7 @@ const Main: React.FunctionComponent = () => {
   return(
     <AppLayout>
       <div className="list-videos">
-        <Image
+        <img
           src={"https://i.ibb.co/gRp6Jbq/tree-racket.png"}
           alt="Deep Chats Logo"
           width={250}
