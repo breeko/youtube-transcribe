@@ -92,7 +92,7 @@ const Sentence: React.FunctionComponent<SentenceProps> = ({ words, highlight, hi
   }
 
   return(
-    <div ref={highlight === undefined ? undefined : ref}>
+    <div ref={highlight === undefined ? undefined : ref} className="transcript-sentence">
       <Paragraph >
         { inner }
       </Paragraph>
