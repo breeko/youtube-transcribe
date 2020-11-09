@@ -25,7 +25,7 @@ const Transcript: React.FunctionComponent<TranscriptProps> = (props) => {
             <Col xs={24} md={6}>
               {/* Add random so that it re-renders state even if originally set */}
               <Button type="link" onClick={() => setSeconds(startTime + Math.random() / 100)}>
-                [{parseSeconds(startTime)}]: {speakerMapping[speaker].name || speaker}
+                [{parseSeconds(startTime)}]: {speakerMapping[speaker]?.name || speaker}
               </Button>
             </Col>
             <Col
