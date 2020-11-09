@@ -4,12 +4,9 @@ import React from "react"
 import { parseSeconds } from "../../utils/timeUtils"
 import Sentence from "./sentence"
 
-
-const { Paragraph } = Typography
-
 interface TranscriptProps {
   lines: Line[]
-  speakerMapping: {[speaker: string]: string}
+  speakerMapping: SpeakerMapping
   jumpToSeconds?: number
   setSeconds: (s: number) => void
   highlightWord: string | undefined
@@ -17,7 +14,7 @@ interface TranscriptProps {
 
 const Transcript: React.FunctionComponent<TranscriptProps> = (props) => {
   const { jumpToSeconds, setSeconds, lines, speakerMapping, highlightWord } = props
-  const firstSpeaker = _.min(Object.keys(speakerMapping))
+
   const jumpStart = lines.find(l => l.endTime > jumpToSeconds)?.startTime
 
   return(
@@ -28,12 +25,12 @@ const Transcript: React.FunctionComponent<TranscriptProps> = (props) => {
             <Col xs={24} md={6}>
               {/* Add random so that it re-renders state even if originally set */}
               <Button type="link" onClick={() => setSeconds(startTime + Math.random() / 100)}>
-                [{parseSeconds(startTime)}]: {speakerMapping[speaker] || speaker}
+                [{parseSeconds(startTime)}]: {speakerMapping[speaker].name || speaker}
               </Button>
             </Col>
             <Col
               xs={24} md={18}
-              className={firstSpeaker === speaker ? "" : "italics" }
+              className={speakerMapping[speaker]?.style}
             >
               <Sentence
                 words={words}

@@ -12,10 +12,17 @@ interface Word {
 }
 
 interface VideoMetadata {
-  speakerMapping?: {[speaker: string]: string}
+  speakerMapping?: SpeakerMapping
   name: string,
   uploaded: string,
   videoId: string
+}
+
+interface SpeakerMapping {
+  [speaker: string]: {
+    name: string
+    style?: "italics"
+  }
 }
 
 declare module 'youtube-player/dist/types' {
