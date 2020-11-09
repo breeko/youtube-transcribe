@@ -13,6 +13,9 @@ interface Word {
 
 interface VideoMetadata {
   speakerMapping?: {[speaker: string]: string}
+  name: string,
+  uploaded: string,
+  videoId: string
 }
 
 declare module 'youtube-player/dist/types' {

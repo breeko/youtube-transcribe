@@ -24,11 +24,16 @@ const VideoPage: React.FunctionComponent = () => {
 
   const fetchVideo = async () => {    
     if (Object.keys(router.query).length === 0) { return }
-    const { video } = router.query
+    const { video, t } = router.query
+    if (typeof t === "string") {
+      const s = Number.parseFloat(t)
+      setSeconds(s)
+      setJumpToSeconds(s)
+    }
+
     if (typeof video === "string") {
       setVideoId(video)
       const storageKey = `${video}/transcript.json.zip`
-      const metaKey = `${video}/meta.json`
       Storage.get(storageKey, { download: true} )
         .then((source: { Body: Blob }) => source.Body.arrayBuffer()
           .then(b => unzipper.Open.buffer(Buffer.from(b)))
@@ -38,18 +43,15 @@ const VideoPage: React.FunctionComponent = () => {
           .catch(() => message.error("Array buffer failed")) // array buffer failed
         .catch(() => message.error("Key doesn't exist")) // key doesn't exist
         .finally(() => setIsLoading(false))
-
-        Storage.get(metaKey, {download: true})
-          .then((source: { Body: Blob }) => source.Body.text())
-            .then(m => setMeta(JSON.parse(m)))
-            .catch(() => message.error("Failed to parse metadata"))
-          .catch(() => message.error("Failed to get metadata"))
     }
   }
 
   React.useEffect(() => {
     if (videoId) {
-      getMetadata(videoId).then(m => document.title = `Deep Chats: ${m.title}`)
+      getMetadata(`${videoId}/meta.json`).then((m: VideoMetadata) => {
+        document.title = `Deep Chats: ${m.name}`
+        setMeta(m)
+      })
     }
   }, [videoId])
 

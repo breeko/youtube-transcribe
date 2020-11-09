@@ -4,7 +4,7 @@ import Image from "next/image"
 import Link from "next/link"
 import React from "react"
 import AppLayout from "../src/AppLayout"
-import { getMetadata, VideoMetadata } from "../src/utils/apiUtils"
+import { getMetadata } from "../src/utils/apiUtils"
 import { isDefined } from "../src/utils/utils"
 
 const { Title } = Typography
@@ -15,14 +15,11 @@ const Main: React.FunctionComponent = () => {
 
   const fetch = React.useCallback(async () => {
     // const keys = await Storage.list("").then(out => out.map((o: {key: string}) => console.log(o.key)))
-    const keys = await Storage.list("").then(out => out.map(async (o: {key: string}) => {
-      const videoId = /^(.+)\/transcript.json.zip$/.exec(o.key)?.[1]
-      if (videoId !== undefined) {
-        return await getMetadata(videoId)
-      }
-    }))
-    const metas: VideoMetadata[] = await Promise.all(keys)
-    setMetas(metas.filter(isDefined))
+    const keys = await Storage.list("").then(async (metas: Array<{key: string}>) =>
+      metas.map(k => k.key.endsWith("meta.json") ? k.key : undefined
+    ))
+    const m = keys.filter(isDefined).map(async k => await getMetadata(k))
+    Promise.all(m).then(m => setMetas(m as VideoMetadata[]))
     setIsLoading(false)
   }, [])
   
@@ -34,7 +31,7 @@ const Main: React.FunctionComponent = () => {
     <AppLayout>
       <div className="list-videos">
         <Image
-          src={"/tree-racket.svg"}
+          src={"https://i.ibb.co/gRp6Jbq/tree-racket.png"}
           alt="Deep Chats Logo"
           width={250}
           height={250}
@@ -46,12 +43,12 @@ const Main: React.FunctionComponent = () => {
         </Spin>
         <Space direction="vertical" >
           {metas.map(m => {
-            const pathname = `videos/${m.video_details.videoId}`
+            const pathname = `videos/${m.videoId}`
             return (
               <Row key={pathname} gutter={[16, 16]}>
                 <Col span={24}>
                   <Link href={{ pathname }}>
-                    <a style={{color: "inherit"}}>{m.title}</a>
+                    <a style={{color: "inherit"}}>{m.name}</a>
                   </Link>
                 </Col>
               </Row>  
