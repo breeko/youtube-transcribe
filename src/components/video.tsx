@@ -15,10 +15,11 @@ interface VideoProps {
   setSearch: (s: string) => void
 }
 
-const Video: React.FunctionComponent<VideoProps> = ({ jump, videoId, seconds, setSearch }) => {
+const Video: React.FunctionComponent<VideoProps> = (props) => {
+  const { jump, videoId, seconds, setSearch } = props
   const [showSearch, setShowSearch] = React.useState(false)
   const [curSearch, setCurSearch] = React.useState<string>("")
-  const [expanded, setExpanded] = React.useState(false)
+  const [curExpanded, setCurExpanded] = React.useState(false)
   const [curSeconds, setCurSeconds] = React.useState(seconds || 0)
   const [playing, setPlaying] = React.useState(false)
   const [player, setPlayer] = React.useState<YouTubePlayer | undefined>(undefined)
@@ -74,7 +75,7 @@ const Video: React.FunctionComponent<VideoProps> = ({ jump, videoId, seconds, se
   React.useEffect(() => {
 
     window.addEventListener('resize', updateSize)
-    // updateSize()
+    updateSize()
     return () => window.removeEventListener('resize', updateSize)
   }, [])
 
@@ -104,7 +105,18 @@ const Video: React.FunctionComponent<VideoProps> = ({ jump, videoId, seconds, se
   return(
     <div className="video-collapsed-row" >
       {/* must set style here because it doesn't work in less */}
+      <div style={{display: curExpanded ? "inherit" : "none"}} ref={ref}>
+        <YouTube
+          onReady={t => setPlayer(t.target)}
+          opts={{height: `${size.height}`, width: `${size.width}`}}
+          onPlay={() => setPlaying(true)}
+          onPause={() => setPlaying(false)}
+          videoId={videoId}
+        />
+      </div>
+
       <div className="video-collapsed-container" style={{fontSize: "min(6vw, 36px)"}}>
+      
       {showSearch ?
         <React.Fragment>
           &nbsp;
@@ -130,9 +142,9 @@ const Video: React.FunctionComponent<VideoProps> = ({ jump, videoId, seconds, se
             {parseSeconds(curSeconds)}
           </span>
           <Divider type="vertical" />
-          { expanded ?
-            <FiMinimize2 onClick={() => setExpanded(false)} /> :
-            <FiMaximize2 onClick={() => setExpanded(true)} />
+          { curExpanded ?
+            <FiMinimize2 onClick={() => setCurExpanded(false)} /> :
+            <FiMaximize2 onClick={() => setCurExpanded(true)} />
           }
           <FiRewind onClick={() => handleForward("backward")} />
           {playing ?
@@ -145,15 +157,6 @@ const Video: React.FunctionComponent<VideoProps> = ({ jump, videoId, seconds, se
         </React.Fragment>
         }
         </div>
-      <div style={{display: expanded ? "inherit" : "none"}} ref={ref}>
-        <YouTube
-          onReady={t => setPlayer(t.target)}
-          opts={{height: `${size.height}`, width: `${size.width}`}}
-          onPlay={() => setPlaying(true)}
-          onPause={() => setPlaying(false)}
-          videoId={videoId}
-        />
-      </div>
     </div>
   )
 }

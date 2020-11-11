@@ -1,12 +1,13 @@
 import { Button, Col, Divider, Row, Typography } from "antd"
 import _ from "lodash"
 import React from "react"
+import { SpeakerMappingInput } from "../../API"
 import { parseSeconds } from "../../utils/timeUtils"
 import Sentence from "./sentence"
 
 interface TranscriptProps {
   lines: Line[]
-  speakerMapping: SpeakerMapping
+  speakerMapping: Map<string, SpeakerMappingInput>
   jumpToSeconds?: number
   setSeconds: (s: number) => void
   highlightWord: string | undefined
@@ -25,15 +26,15 @@ const Transcript: React.FunctionComponent<TranscriptProps> = (props) => {
             <Col xs={24} md={6}>
               {/* Add random so that it re-renders state even if originally set */}
               <Button type="link" onClick={() => setSeconds(startTime + Math.random() / 100)}>
-                [{parseSeconds(startTime)}]: {speakerMapping[speaker]?.name || speaker}
+                [{parseSeconds(startTime)}]: {speakerMapping.get(speaker)?.name || speaker}
               </Button>
             </Col>
             <Col
               xs={24} md={18}
-              className={speakerMapping[speaker]?.style}
+              className={speakerMapping.get(speaker)?.style}
             >
               <Sentence
-                words={words}
+                text={words}
                 highlight={ startTime === jumpStart ? jumpToSeconds : undefined}
                 highlightWord={highlightWord}
               />

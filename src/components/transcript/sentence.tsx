@@ -7,7 +7,7 @@ import { getWordDisplay } from "../../utils/utils"
 const { Paragraph } = Typography
 
 interface SentenceProps {
-  words: Word[]
+  text: string
   highlight?: number
   highlightWord: string | undefined
 }
@@ -55,7 +55,7 @@ const wrapSearchResults = (source: string, find: string) => {
   return outputs
 }
 
-const Sentence: React.FunctionComponent<SentenceProps> = ({ words, highlight, highlightWord }) => {
+const Sentence: React.FunctionComponent<SentenceProps> = ({ text, highlight, highlightWord }) => {
   const ref = React.useRef<HTMLDivElement>()
 
   React.useEffect(() => {
@@ -71,7 +71,7 @@ const Sentence: React.FunctionComponent<SentenceProps> = ({ words, highlight, hi
   let highlightForward = false
 
   let inner: JSX.Element[] = []
-  const combined = words.map(getWordDisplay).join("")
+  const combined = text
 
   // TODO: Figure out why this is too slow!
   if (highlightWord !== undefined) {
@@ -79,16 +79,8 @@ const Sentence: React.FunctionComponent<SentenceProps> = ({ words, highlight, hi
   } else if (highlight === undefined) {
     inner = [<span key="1">{combined}</span>]
   } else {
-    words.forEach((w, idx) => {
-      highlightForward = highlightForward || highlight !== undefined && w.start !== undefined && w.start > highlight
-      // must set key to random if being highlighted to className is re-applied
-      const key = highlight ? shortid() : idx
-      inner.push(
-        <span key={key} className={highlightForward ? "highlight-fade" : undefined}>
-          {getWordDisplay(w)}
-        </span>
-      )
-    })
+    // must set random key so it gets re-rendered w/ the fade
+    inner = [<span key={shortid()} className="highlight-fade">{combined}</span>]
   }
 
   return(

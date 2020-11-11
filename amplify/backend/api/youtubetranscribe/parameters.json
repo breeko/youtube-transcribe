@@ -1,0 +1,11 @@
+{
+    "AppSyncApiName": "youtubetranscribe",
+    "DynamoDBBillingMode": "PAY_PER_REQUEST",
+    "DynamoDBEnableServerSideEncryption": false,
+    "AuthCognitoUserPoolId": {
+        "Fn::GetAtt": [
+            "authyoutubetranscribed0132cb4",
+            "Outputs.UserPoolId"
+        ]
+    }
+}

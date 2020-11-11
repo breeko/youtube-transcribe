@@ -1,5 +1,11 @@
-import { Storage } from "aws-amplify"
+import { API, graphqlOperation, Storage } from "aws-amplify"
 import { message } from "antd"
+import { GetVideoQuery, GetVideoQueryVariables, ListMediasQuery, ListMediasQueryVariables, ListVideosQuery, ListVideosQueryVariables } from "../API"
+import * as queries from '../../src/graphql/queries'
+import { isDefined } from "./utils"
+import _ from "lodash"
+
+const noLimit = { limit: 65536 }
 
 export const getVideoId = (url: string): string => {
   const rx = /(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9-_]{1,})/g
@@ -8,11 +14,29 @@ export const getVideoId = (url: string): string => {
 }
 
 export const getMetadata = (key: string): Promise<object> => {
-  console.log(key)
   return Storage.get(key, {download: true})
     .then((source: { Body: Blob }) => source.Body.text())
       .then(m => JSON.parse(m))
       .catch(() => message.error("Failed to parse metadata"))
     .catch(() => message.error("Failed to get metadata"))
 
+}
+// media
+export const listMedia = async (variables: ListMediasQueryVariables) => {
+  const m = await API.graphql(graphqlOperation(queries.listMedias, {...noLimit, ...variables})) as {data: ListMediasQuery}
+  const filtered = m.data.listMedias?.items?.filter(isDefined) || []
+  const sorted = _.orderBy(filtered, [i => i.name])
+  return sorted
+}
+
+export const listVideo = async (variables: ListVideosQueryVariables) => {
+  const m = await API.graphql(graphqlOperation(queries.listVideos, {...noLimit, ...variables})) as {data: ListVideosQuery}
+  const filtered = m.data.listVideos?.items?.filter(isDefined) || []
+  const sorted = _.orderBy(filtered, [i => i.name])
+  return sorted
+}
+
+export const getVideo = async (variables: GetVideoQueryVariables) => {
+  const m = await API.graphql(graphqlOperation(queries.getVideo, variables)) as {data: GetVideoQuery}
+  return m.data.getVideo
 }

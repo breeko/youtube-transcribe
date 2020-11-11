@@ -4,23 +4,23 @@ import Image from "next/image"
 import Link from "next/link"
 import React from "react"
 import AppLayout from "../src/AppLayout"
-import { getMetadata } from "../src/utils/apiUtils"
-import { isDefined } from "../src/utils/utils"
+import { listVideo } from "../src/utils/apiUtils"
+
 
 const { Title } = Typography
 
+interface Latest {
+  name: string
+  path: string
+}
 const Main: React.FunctionComponent = () => {
   const [isLoading, setIsLoading] = React.useState(true)
-  const [metas, setMetas] = React.useState<VideoMetadata[]>([])
+  const [latest, setLatest] = React.useState<Latest[]>([])
 
   const fetch = React.useCallback(async () => {
-    // const keys = await Storage.list("").then(out => out.map((o: {key: string}) => console.log(o.key)))
-    const keys = await Storage.list("").then(async (metas: Array<{key: string}>) =>
-      metas.map(k => k.key.endsWith("meta.json") ? k.key : undefined
-    ))
-    const m = keys.filter(isDefined).map(async k => await getMetadata(k))
-    Promise.all(m).then(m => setMetas(m as VideoMetadata[]))
-    setIsLoading(false)
+    listVideo({})
+      .then(v => setLatest(v.map(v => ({ name: v.name, path: v.id }))))
+      .finally(() => setIsLoading(false))
   }, [])
   
   React.useEffect(() => {
@@ -42,8 +42,8 @@ const Main: React.FunctionComponent = () => {
           <Title level={3}>Latest Videos</Title>
         </Spin>
         <Space direction="vertical" >
-          {metas.map(m => {
-            const pathname = `videos/${m.videoId}`
+          {latest.map(m => {
+            const pathname = `videos/${m.path}`
             return (
               <Row key={pathname} gutter={[16, 16]}>
                 <Col span={24}>

@@ -54,19 +54,19 @@
   line-height: 1.6;
   font-size: 18px;
   color: @dark-grey;
-  height: calc(100vh - 64px);
-  overflow-y: scroll;
+  // overflow-y: scroll;
   overflow-x: hidden;
+  flex: 1;
 }
 
 .transcript-sentence {
   max-width: 600px;
 }
 
-.video-collapsed-anchor {
-  border-style: solid;
-  border-color: @dark-blue;
-  margin: 10px;
+.video-page-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 20px);
 }
 
 .video-collapsed-row {

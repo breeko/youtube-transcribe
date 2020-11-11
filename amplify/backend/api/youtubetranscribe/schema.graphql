@@ -1,0 +1,32 @@
+type Media @model
+  @auth(rules: [
+    { allow: public, operations: [read] }
+    { allow: groups, groups: ["admin"] }
+  ]) {
+    id: ID!
+    name: String!
+    image: String!
+    videos: [Video] @connection(name: "Videos")
+  }
+
+type SpeakerMapping {
+  speaker: String!
+  name: String!
+  style: String
+}
+
+type Video @model
+  @auth(rules: [
+    { allow: public, operations: [read] }
+    { allow: groups, groups: ["admin"] }
+  ]) {
+  id: ID!
+  name: String!
+  media: Media! @connection(name: "Videos")
+  speakers: [SpeakerMapping]
+  videoPath: String!
+  transcript: String!
+  published: AWSDate!
+  length: Int!
+  description: String
+}
