@@ -46,7 +46,6 @@ const VideoPage: React.FunctionComponent = () => {
         const speakerMapping = new Map<string, SpeakerMappingInput>()
         info.speakers.forEach(s => speakerMapping.set(s.speaker, s))
         const i = {name, speakerMapping, videoPath}
-        console.log(i)
         setVideoInfo(i)
         Storage.get(info.transcript, { download: true} )
           .then((source: { Body: Blob }) => source.Body.text()
