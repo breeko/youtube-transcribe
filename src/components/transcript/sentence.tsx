@@ -3,13 +3,15 @@ import React from "react"
 import shortid from "shortid"
 import _ from "lodash"
 import { getWordDisplay } from "../../utils/utils"
+import { FiEdit } from "react-icons/fi"
 
 const { Paragraph } = Typography
 
 interface SentenceProps {
   text: string
-  highlight?: number
+  highlight: boolean
   highlightWord: string | undefined
+  handleEdit: () => void
 }
 
 interface SearchResult {
@@ -55,7 +57,7 @@ const wrapSearchResults = (source: string, find: string) => {
   return outputs
 }
 
-const Sentence: React.FunctionComponent<SentenceProps> = ({ text, highlight, highlightWord }) => {
+const Sentence: React.FunctionComponent<SentenceProps> = ({ text, highlight, highlightWord, handleEdit }) => {
   const ref = React.useRef<HTMLDivElement>()
 
   React.useEffect(() => {
@@ -70,23 +72,28 @@ const Sentence: React.FunctionComponent<SentenceProps> = ({ text, highlight, hig
 
   let highlightForward = false
 
-  let inner: JSX.Element[] = []
+  let inner: JSX.Element | JSX.Element[] = []
   const combined = text
 
   // TODO: Figure out why this is too slow!
-  if (highlightWord !== undefined) {
+  if (highlightWord !== "") {
     inner = wrapSearchResults(combined, highlightWord)
-  } else if (highlight === undefined) {
-    inner = [<span key="1">{combined}</span>]
+  } else if (!highlight) {
+    inner = <span>{combined}</span>
   } else {
     // must set random key so it gets re-rendered w/ the fade
-    inner = [<span key={shortid()} className="highlight-fade">{combined}</span>]
+    inner = <span key={shortid()} className="highlight-fade">{combined}</span>
   }
 
   return(
-    <div ref={highlight === undefined ? undefined : ref} className="transcript-sentence">
-      <Paragraph >
+    <div
+      className="transcript-sentence"
+      ref={highlight === false ? undefined : ref}
+    >
+      <Paragraph>
         { inner }
+        <br/>
+        <FiEdit style={{ float: "right" }} onClick={handleEdit}/>
       </Paragraph>
     </div>
   )
