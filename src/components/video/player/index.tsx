@@ -1,21 +1,21 @@
-import { Divider, message } from "antd"
-import Search from "antd/lib/input/Search"
+import { Divider } from "antd"
 import { useRouter } from "next/dist/client/router"
 import React from "react"
-import { FiCrosshair, FiFastForward, FiHome, FiMaximize2, FiMinimize2, FiPause, FiPlay, FiRewind, FiSearch, FiTrash2, FiX } from "react-icons/fi"
+import { FiCrosshair, FiFastForward, FiHome, FiLogIn, FiLogOut, FiMaximize2, FiMinimize2, FiPause, FiPlay, FiRewind, FiSave } from "react-icons/fi"
 import YouTube from "react-youtube"
-import PlayerContainer from "../../containers/player-container"
-import { parseSeconds } from "../../utils/timeUtils"
+import PlayerContainer from "../../../containers/player-container"
+import { parseSeconds } from "../../../utils/timeUtils"
+
 
 interface PlayerProps {
   videoId: string
-  setSearch: (s: string) => void
+  save?: () => void
+  handleAuth: (action: "login" | "logout") => void
 }
 
 const Player: React.FunctionComponent<PlayerProps> = (props) => {
-  const { videoId, setSearch } = props
-  const [showSearch, setShowSearch] = React.useState(false)
-  const [curSearch, setCurSearch] = React.useState<string>("")
+  const { videoId, save, handleAuth } = props
+  const [curSeconds, setCurSeconds] = React.useState(0)
   const [curExpanded, setCurExpanded] = React.useState(false)
   const [size, setSize] = React.useState({width: 480, height: 292 })
 
@@ -23,8 +23,6 @@ const Player: React.FunctionComponent<PlayerProps> = (props) => {
   const playerController = PlayerContainer.useContainer()
 
   const router = useRouter()
-
-  const MIN_SEARCH_LENGTH = 3
 
   const updateSize = React.useCallback(() => {
     const width = Math.min(window.innerWidth - 20, 480)
@@ -35,20 +33,31 @@ const Player: React.FunctionComponent<PlayerProps> = (props) => {
   }, [])
 
   React.useEffect(() => {
+    // updates the time
+    let interval = null;
+    const s = playerController.getCurrentTime()
+    if (s !== undefined) {
+      setCurSeconds(s)
+    }
+    if (playerController.playing) {
+      interval = setInterval(() => {  
+        const s = playerController.getCurrentTime()
+        if (s !== undefined) {
+          setCurSeconds(s)
+        }
+      }, 1000)
+    } else {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [playerController.playing])
+
+
+  React.useEffect(() => {
     window.addEventListener('resize', updateSize)
     updateSize()
     return () => window.removeEventListener('resize', updateSize)
   }, [])
-
-  const handleSearch = () => {
-    if (curSearch.length >= MIN_SEARCH_LENGTH) {
-      setSearch(curSearch)
-    } else if (curSearch === "") {
-      setSearch(undefined)
-    } else {
-      message.error("Search at least 3 characters")
-    }
-  }
 
   return(
     <div className="video-collapsed-row" >
@@ -64,29 +73,11 @@ const Player: React.FunctionComponent<PlayerProps> = (props) => {
       </div>
 
       <div className="video-collapsed-container" style={{fontSize: "min(6vw, 36px)"}}>
-      
-      {showSearch ?
-        <React.Fragment>
-          &nbsp;
-          <Search
-            autoFocus
-            placeholder="Search"
-            className="search-input"
-            value={curSearch}
-            onChange={s => setCurSearch(s.target.value)}
-            onPressEnter={() => handleSearch()}
-          />
-          <FiTrash2
-            className={curSearch === "" ? "faded" : undefined}
-            onClick={() => { setCurSearch(""); setSearch(undefined) }}
-          />
-          <FiX onClick={() => setShowSearch(false)}/>
-        </React.Fragment> :
         <React.Fragment>
           <FiHome onClick={ () => router.push("/") }/>
           <Divider type="vertical" />
           <span>
-            {parseSeconds(playerController.curSeconds)}
+            {parseSeconds(curSeconds)}
           </span>
           <Divider type="vertical" />
           { curExpanded ?
@@ -100,12 +91,17 @@ const Player: React.FunctionComponent<PlayerProps> = (props) => {
           }
           <FiFastForward onClick={() => playerController.skipSeconds(15)} />
           <FiCrosshair onClick={() => { playerController.highlightPlaying()} } />
-          <FiSearch onClick={() => setShowSearch(true)} />
+          <FiSave onClick={save} className={save === undefined ? "faded" : "inherit"}/>
+          {
+            save === undefined ?
+            <FiLogIn onClick={() => handleAuth("login")} /> :
+            <FiLogOut onClick={() => handleAuth("logout")} />
+          }
+            
         </React.Fragment>
-        }
-        </div>
+      </div>
     </div>
   )
 }
 
-export default React.memo(Player, (a, b) => a.videoId === b.videoId)
+export default Player

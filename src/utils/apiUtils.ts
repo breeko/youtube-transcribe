@@ -19,8 +19,21 @@ export const getMetadata = (key: string): Promise<object> => {
       .then(m => JSON.parse(m))
       .catch(() => message.error("Failed to parse metadata"))
     .catch(() => message.error("Failed to get metadata"))
-
 }
+
+export const downloadFromS3 = (key: string) =>
+  Storage.get(key, { download: true} )
+    .then((source: { Body: Blob }) => source.Body.text()
+      .then(d => d.toString())
+    .catch(() => message.error("Failed to parse")))
+    .catch(() => message.error("Failed to retrieve"))
+
+
+export const saveToS3 = (key: string, data: string) =>
+  Storage.put(key, data)
+    .then(() => message.success("File saved", 2))
+    .catch(() => message.error("Save failed", 2))
+
 // media
 export const listMedia = async (variables: ListMediasQueryVariables) => {
   const m = await API.graphql(graphqlOperation(queries.listMedias, {...noLimit, ...variables})) as {data: ListMediasQuery}

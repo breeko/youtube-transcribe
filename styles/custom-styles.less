@@ -13,10 +13,11 @@
 
 .app-layout {
   background-color: @dark-blue;
+
 }
 
 .app-content {
-  min-height: calc(100vh - 116px);
+  min-height: calc(100vh - 10px);
   padding: 10px;
   background-color: white;
 }
@@ -25,12 +26,12 @@
   text-align: left;
   padding-left: 10px;
   padding-right: 10px;
-  max-height: 10vh;
   width: 100vw;
   font-size: 24px;
-  background-color: @dark-blue;
+  background-color: white;
+  // position: absolute;
   z-index: 1;
-  box-shadow: 0px 0px 5px 5px rgba(41,41,41,0.15);
+  // box-shadow: 0px 0px 5px 5px rgba(41,41,41,0.15);
 }
 
 .app-footer {
@@ -55,9 +56,11 @@
   font-size: 18px;
   color: @dark-grey;
   // overflow-y: scroll;
-  overflow-x: hidden;
-  margin-right: -10px; // to keep scrollbar on the right
-  flex: 1;
+  max-width: 800px;
+  overflow: auto;
+  // overflow-x: hidden;
+  margin-right: -20px; // to keep scrollbar on the right
+  // flex: 1;
 }
 
 .transcript-sentence {
@@ -67,13 +70,17 @@
 .video-page-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 20px);
+  align-items: center;
+  min-height: calc(100vh - 20px);
 }
 
 .video-collapsed-row {
   display: flex;
   align-items: center;
   flex-direction: column;
+  position: fixed;
+  min-height: 50px;
+  z-index: 1;
 }
 
 .video-collapsed-container {
@@ -82,8 +89,10 @@
   max-height: 10vh;
   align-items: center;
   max-width: 600px;
+  min-height: 50px;
   justify-content: space-between;
   display: flex;
+  background-color: white;
   svg > {
     cursor: pointer;
     margin-right: 5px;
@@ -109,9 +118,9 @@
 }
 
 .search-input {
-  width: 350px;
+  width: 300px;
   max-width: calc(100vw - 100px;);
-  padding-top: 10px;
+  padding: 5px;
 }
 
 .italics {
@@ -120,6 +129,7 @@
 
 .faded {
   opacity: 50%;
+  cursor: not-allowed;
 }
 
 @keyframes fadeInOut {
@@ -147,4 +157,10 @@
 
 .highlight {
   background-color: @yellow;
+}
+
+.invalid {
+  border-color: @red;
+  border-style: solid;
+  border-width: 2px;
 }
