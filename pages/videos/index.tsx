@@ -1,8 +1,6 @@
 import React from "react"
 import Main from ".."
 
-const VideoListPage: React.FunctionComponent = () => {
-  return <Main />
-}
+const Videos: React.FunctionComponent = Main
 
-export default VideoListPage
+export default Videos

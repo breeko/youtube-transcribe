@@ -1,8 +1,9 @@
+import { SpeakerMappingInput } from "../../API"
 interface Line {
   speaker: string
   startTime: number,
   endTime: number,
-  words: string, //Word[]
+  text: string, //Word[]
 }
 
 interface Word {
@@ -11,15 +12,7 @@ interface Word {
   end?: number
 }
 
-declare module 'youtube-player/dist/types' {
-  interface YouTubePlayer {
-    getCurrentTime: () => number // Promise<number>
-    seekTo: (to: number, forward: boolean) => void//Promise<void>
-    playVideo: () => void
-    pauseVideo: () => void
-  }
-}
-
+type SpeakerMapping = Map<string, SpeakerMappingInput>
 declare module "*.svg" {
   const content: string
   export default content
