@@ -69,6 +69,7 @@ export type DeleteMediaInput = {
 export type CreateVideoInput = {
   id?: string | null,
   name: string,
+  image?: string | null,
   speakers?: Array< SpeakerMappingInput | null > | null,
   videoPath: string,
   transcript: string,
@@ -86,6 +87,7 @@ export type SpeakerMappingInput = {
 
 export type ModelVideoConditionInput = {
   name?: ModelStringInput | null,
+  image?: ModelStringInput | null,
   videoPath?: ModelStringInput | null,
   transcript?: ModelStringInput | null,
   published?: ModelStringInput | null,
@@ -111,6 +113,7 @@ export type ModelIntInput = {
 export type UpdateVideoInput = {
   id: string,
   name?: string | null,
+  image?: string | null,
   speakers?: Array< SpeakerMappingInput | null > | null,
   videoPath?: string | null,
   transcript?: string | null,
@@ -152,6 +155,7 @@ export type ModelIDInput = {
 export type ModelVideoFilterInput = {
   id?: ModelIDInput | null,
   name?: ModelStringInput | null,
+  image?: ModelStringInput | null,
   videoPath?: ModelStringInput | null,
   transcript?: ModelStringInput | null,
   published?: ModelStringInput | null,
@@ -160,6 +164,42 @@ export type ModelVideoFilterInput = {
   and?: Array< ModelVideoFilterInput | null > | null,
   or?: Array< ModelVideoFilterInput | null > | null,
   not?: ModelVideoFilterInput | null,
+};
+
+export type GetMediaFullQueryVariables = {
+  id: string,
+};
+
+export type GetMediaFullQuery = {
+  getMedia:  {
+    __typename: "Media",
+    id: string,
+    name: string,
+    image: string,
+    createdAt: string,
+    updatedAt: string,
+    videos:  {
+      __typename: "ModelVideoConnection",
+      items:  Array< {
+        __typename: "Video",
+        id: string,
+        name: string,
+        length: number,
+        published: string,
+        image: string | null,
+        speakers:  Array< {
+          __typename: "SpeakerMapping",
+          name: string,
+          speaker: string,
+          style: string | null,
+        } | null > | null,
+        videoPath: string,
+        transcript: string,
+        createdAt: string,
+        updatedAt: string,
+      } | null > | null,
+    } | null,
+  } | null,
 };
 
 export type CreateMediaMutationVariables = {
@@ -232,6 +272,7 @@ export type CreateVideoMutation = {
     __typename: "Video",
     id: string,
     name: string,
+    image: string | null,
     speakers:  Array< {
       __typename: "SpeakerMapping",
       speaker: string,
@@ -266,6 +307,7 @@ export type UpdateVideoMutation = {
     __typename: "Video",
     id: string,
     name: string,
+    image: string | null,
     speakers:  Array< {
       __typename: "SpeakerMapping",
       speaker: string,
@@ -300,6 +342,7 @@ export type DeleteVideoMutation = {
     __typename: "Video",
     id: string,
     name: string,
+    image: string | null,
     speakers:  Array< {
       __typename: "SpeakerMapping",
       speaker: string,
@@ -373,6 +416,7 @@ export type GetVideoQuery = {
     __typename: "Video",
     id: string,
     name: string,
+    image: string | null,
     speakers:  Array< {
       __typename: "SpeakerMapping",
       speaker: string,
@@ -410,6 +454,7 @@ export type ListVideosQuery = {
       __typename: "Video",
       id: string,
       name: string,
+      image: string | null,
       videoPath: string,
       transcript: string,
       published: string,
@@ -472,6 +517,7 @@ export type OnCreateVideoSubscription = {
     __typename: "Video",
     id: string,
     name: string,
+    image: string | null,
     speakers:  Array< {
       __typename: "SpeakerMapping",
       speaker: string,
@@ -501,6 +547,7 @@ export type OnUpdateVideoSubscription = {
     __typename: "Video",
     id: string,
     name: string,
+    image: string | null,
     speakers:  Array< {
       __typename: "SpeakerMapping",
       speaker: string,
@@ -530,6 +577,7 @@ export type OnDeleteVideoSubscription = {
     __typename: "Video",
     id: string,
     name: string,
+    image: string | null,
     speakers:  Array< {
       __typename: "SpeakerMapping",
       speaker: string,

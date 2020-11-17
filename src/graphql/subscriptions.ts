@@ -49,6 +49,7 @@ export const onCreateVideo = /* GraphQL */ `
     onCreateVideo {
       id
       name
+      image
       speakers {
         speaker
         name
@@ -76,6 +77,7 @@ export const onUpdateVideo = /* GraphQL */ `
     onUpdateVideo {
       id
       name
+      image
       speakers {
         speaker
         name
@@ -103,6 +105,7 @@ export const onDeleteVideo = /* GraphQL */ `
     onDeleteVideo {
       id
       name
+      image
       speakers {
         speaker
         name

@@ -23,6 +23,7 @@ type Video @model
   id: ID!
   name: String!
   media: Media! @connection(name: "Videos")
+  image: String
   speakers: [SpeakerMapping]
   videoPath: String!
   transcript: String!

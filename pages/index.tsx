@@ -1,4 +1,5 @@
 import { Card, Col, Divider, Row, Space, Spin, Typography } from "antd"
+import { useRouter } from "next/dist/client/router"
 import Link from "next/link"
 import React from "react"
 import AppLayout from "../src/AppLayout"
@@ -14,6 +15,8 @@ const Main: React.FunctionComponent = () => {
   const [isLoading, setIsLoading] = React.useState(true)
   const [latest, setLatest] = React.useState<Latest[]>([])
 
+  const router = useRouter()
+
   const fetch = React.useCallback(async () => {
     listVideo({})
       .then(v => setLatest(v.map(v => ({ name: v.name, path: v.id }))))
@@ -26,7 +29,7 @@ const Main: React.FunctionComponent = () => {
 
   return(
     <AppLayout>
-      <div className="list-videos">
+      <div className="main-page">
         <Space direction="vertical">
           <img
             src={"https://i.ibb.co/HgtBvtN/deep-chats.png"}
@@ -38,17 +41,24 @@ const Main: React.FunctionComponent = () => {
         </Space>
         <Divider/>
         <Title level={2}>Featured Programs</Title>
-        <Row gutter={[32,32]}>
+        <Row gutter={[32,32]} className="padded">
           <Col xs={12} sm={8}>
-            <Card cover={<img src="https://i.ibb.co/ZmVL6kk/lex-fridman.webp" alt="Lex Fridman"/>}>
-              {/* <Card.Meta title="Lex Fridman Podcast" /> */}
+            <Card
+              hoverable
+              cover={<img src="https://i.ibb.co/ZmVL6kk/lex-fridman.webp" alt="Lex Fridman"/>}
+              onClick={() => router.push("/lex")}
+            >
+              
               Lex Fridman Podcast
-              <br/>
             </Card>
           </Col>
           <Col xs={12} sm={8}>
-            <Card cover={<img src="https://i.ibb.co/bg2DV1X/add.png" alt="Add yours"/>}>
-              <a href="mailto=sponsor@deep-chats.com">Contact us</a> to be featured
+            <Card
+              hoverable
+              cover={<img src="https://i.ibb.co/bg2DV1X/add.png" alt="Add yours"/>}
+              onClick={() => window.open("mailto:feature@deep-chats.com")}
+            >
+              <a href="mailto=feature@deep-chats.com">Contact us</a> to be featured
             </Card>
           </Col>
         </Row>

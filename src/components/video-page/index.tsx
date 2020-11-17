@@ -32,24 +32,24 @@ const VideoPageInner: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     const { video, t } = router.query
+    if (video === undefined) { return }
     if (typeof t === "string") {
       const s = Number.parseFloat(t)
       playerContainer.seekTo(s)
     }
+    const videoId = typeof video === "string" ? video : video.join("/")
 
-    if (typeof video === "string") {
-      getVideo({id: video}).then(info => {
-        const name = info.name
-        const videoPath = info.videoPath
-        const transcript = info.transcript
-        const speakerMapping = new Map<string, SpeakerMappingInput>()
-        info.speakers.forEach(s => speakerMapping.set(s.speaker, s))
-        const i = {name, speakerMapping, videoPath, transcript}
-        setVideoInfo(i)
-        document.title = `Deep Chats: ${name}`
-        downloadFromS3(transcript)
-          .then(t => setInnerRaw(t))
-      })}
+    getVideo({id: videoId}).then(info => {
+      const name = info.name
+      const videoPath = info.videoPath
+      const transcript = info.transcript
+      const speakerMapping = new Map<string, SpeakerMappingInput>()
+      info.speakers.forEach(s => speakerMapping.set(s.speaker, s))
+      const i = {name, speakerMapping, videoPath, transcript}
+      setVideoInfo(i)
+      document.title = `Deep Chats: ${name}`
+      downloadFromS3(transcript).then(t => setInnerRaw(t))
+      })
   }, [router.query])
 
 

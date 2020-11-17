@@ -1,5 +1,5 @@
 import { Divider } from "antd"
-import { useRouter } from "next/dist/client/router"
+import { useRouter } from "next/router"
 import React from "react"
 import { FiCrosshair, FiFastForward, FiHome, FiLogIn, FiLogOut, FiMaximize2, FiMinimize2, FiPause, FiPlay, FiRewind, FiSave } from "react-icons/fi"
 import YouTube from "react-youtube"
@@ -17,19 +17,10 @@ const Player: React.FunctionComponent<PlayerProps> = (props) => {
   const { videoId, save, handleAuth } = props
   const [curSeconds, setCurSeconds] = React.useState(0)
   const [curExpanded, setCurExpanded] = React.useState(false)
-  const [size, setSize] = React.useState({width: 480, height: 292 })
 
   const playerController = PlayerContainer.useContainer()
 
   const router = useRouter()
-
-  const updateSize = React.useCallback(() => {
-    const width = Math.min(window.innerWidth - 20, 480)
-    const height = Math.floor(width / 1.64)
-    if (width !== size.width || height !== size.height) {
-      setSize({width, height})
-    }
-  }, [])
 
   React.useEffect(() => {
     // updates the time
@@ -50,13 +41,6 @@ const Player: React.FunctionComponent<PlayerProps> = (props) => {
     }
     return () => clearInterval(interval);
   }, [playerController.playing])
-
-
-  React.useEffect(() => {
-    window.addEventListener('resize', updateSize)
-    updateSize()
-    return () => window.removeEventListener('resize', updateSize)
-  }, [])
 
   return(
     <div className="video-collapsed-row" >

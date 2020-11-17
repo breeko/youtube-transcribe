@@ -39,6 +39,7 @@ export const getVideo = /* GraphQL */ `
     getVideo(id: $id) {
       id
       name
+      image
       speakers {
         speaker
         name
@@ -71,6 +72,7 @@ export const listVideos = /* GraphQL */ `
       items {
         id
         name
+        image
         videoPath
         transcript
         published

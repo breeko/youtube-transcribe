@@ -61,6 +61,7 @@ export const createVideo = /* GraphQL */ `
     createVideo(input: $input, condition: $condition) {
       id
       name
+      image
       speakers {
         speaker
         name
@@ -91,6 +92,7 @@ export const updateVideo = /* GraphQL */ `
     updateVideo(input: $input, condition: $condition) {
       id
       name
+      image
       speakers {
         speaker
         name
@@ -121,6 +123,7 @@ export const deleteVideo = /* GraphQL */ `
     deleteVideo(input: $input, condition: $condition) {
       id
       name
+      image
       speakers {
         speaker
         name

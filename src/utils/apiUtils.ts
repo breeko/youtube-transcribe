@@ -1,7 +1,8 @@
 import { API, graphqlOperation, Storage } from "aws-amplify"
 import { message } from "antd"
-import { GetVideoQuery, GetVideoQueryVariables, ListMediasQuery, ListMediasQueryVariables, ListVideosQuery, ListVideosQueryVariables } from "../API"
+import { GetMediaFullQuery, GetMediaFullQueryVariables, GetMediaQuery, GetMediaQueryVariables, GetVideoQuery, GetVideoQueryVariables, ListMediasQuery, ListMediasQueryVariables, ListVideosQuery, ListVideosQueryVariables } from "../API"
 import * as queries from '../../src/graphql/queries'
+import * as custom from '../../src/graphql/custom-queries'
 import { isDefined } from "./utils"
 import _ from "lodash"
 
@@ -52,4 +53,12 @@ export const listVideo = async (variables: ListVideosQueryVariables) => {
 export const getVideo = async (variables: GetVideoQueryVariables) => {
   const m = await API.graphql(graphqlOperation(queries.getVideo, variables)) as {data: GetVideoQuery}
   return m.data.getVideo
+}
+
+export const getMediaFull = async (id: string): Promise<MediaFull | undefined> => {
+  const m = await API.graphql(graphqlOperation(custom.getMediaFull, { id })) as {data: GetMediaFullQuery}
+  const filteredVideos = m.data.getMedia?.videos?.items?.filter(isDefined) || []
+  const videos = _.orderBy(filteredVideos, [i => i.name])
+  const media = m.data.getMedia ? {...m.data.getMedia, videos} : undefined
+  return media
 }
