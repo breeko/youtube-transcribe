@@ -1,11 +1,11 @@
 export const MY_SEO = {
   title: 'Deep Chats',
-  description: 'Transcribed conversations with interesting people',
+  description: 'Video and audio, transcribed and attributed',
   openGraph: {
       type: 'website',
-      url: '???',
+      url: 'https://www.deep-chats.com',
       title: 'Deep Chats',
-      description: 'Deep Chats',
-      image: '/images/tree-racket.svg',
+      description: 'Video and audio, transcribed and attributed',
+      image: '/images/deep-chats.svg',
   }
 };

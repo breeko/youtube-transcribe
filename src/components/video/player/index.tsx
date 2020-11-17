@@ -19,7 +19,6 @@ const Player: React.FunctionComponent<PlayerProps> = (props) => {
   const [curExpanded, setCurExpanded] = React.useState(false)
   const [size, setSize] = React.useState({width: 480, height: 292 })
 
-  const ref = React.useRef<HTMLDivElement>(null)
   const playerController = PlayerContainer.useContainer()
 
   const router = useRouter()
@@ -62,17 +61,17 @@ const Player: React.FunctionComponent<PlayerProps> = (props) => {
   return(
     <div className="video-collapsed-row" >
       {/* must set style here because it doesn't work in less */}
-      <div style={{display: curExpanded ? "inherit" : "none"}} ref={ref}>
+      <div style={{display: curExpanded ? "inherit" : "none"}}>
         <YouTube
           onReady={t => playerController.setPlayer(t.target)}
-          opts={{height: `${size.height}`, width: `${size.width}`}}
           onPlay={() => playerController.play()}
           onPause={() => playerController.pause()}
           videoId={videoId}
+          containerClassName="youtubeContainer"
         />
       </div>
 
-      <div className="video-collapsed-container" style={{fontSize: "min(6vw, 36px)"}}>
+      <div className="video-collapsed-container" style={{fontSize: "min(5vw, 36px)"}}>
         <React.Fragment>
           <FiHome onClick={ () => router.push("/") }/>
           <Divider type="vertical" />

@@ -7,16 +7,17 @@ import { YouTubePlayer } from 'youtube-player/dist/types'
 
 const usePlayerContainer = () => {
   const [ready, setReady] = React.useState(false)
-  const [player, setPlayer] = React.useState<YouTubePlayer | undefined>(undefined)
+  const [player, setPlayer] = React.useState<YouTubePlayer | null>(null)
   const [playing, setPlaying] = React.useState(false)
   const [highlightedSeconds, setHighlightedSeconds] = React.useState<undefined | number>(undefined)
 
-  const getCurrentTime = () => player?.getCurrentTime()
+  const getCurrentTime = () => ready && player.getCurrentTime()
 
-  const play = () => { if (!playing) { player?.playVideo(); setPlaying(true) } }
-  const pause = () => { if (playing) { player?.pauseVideo(); setPlaying(false) } }
+  const play = () => { if (ready && !playing) { player?.playVideo(); setPlaying(true) } }
+  const pause = () => { if (ready && playing) { player?.pauseVideo(); setPlaying(false) } }
 
   const seekTo = async (seconds: number) => {
+    if (!ready) { return }
     play()
     let ct = 0
     while (player.getPlayerState() !== 1 && ct < 10) {
@@ -27,15 +28,15 @@ const usePlayerContainer = () => {
     player?.seekTo(seconds, true)
   }
 
-  const skipSeconds = (seconds: number) => seekTo(player?.getCurrentTime() + seconds)
+  const skipSeconds = (seconds: number) => ready && seekTo(player.getCurrentTime() + seconds)
 
-  const highlightPlaying = () => setHighlightedSeconds(player?.getCurrentTime() + Math.random() / 100)
+  const highlightPlaying = () => ready && setHighlightedSeconds(player.getCurrentTime() + Math.random() / 100)
 
   React.useEffect(() => {
-    if (player === undefined) {
-      setReady(false)
-    } else {
+    if (player) {
       setReady(true)
+    } else {
+      setReady(false)
     }
   }, [player])
 

@@ -63,7 +63,7 @@ const VideoPageInner: React.FunctionComponent = () => {
       }
     })
     setIsLoading(false)
-  }, [inner, playerContainer])
+  }, [inner, playerContainer.ready])
 
   React.useEffect(() => {
     const elems: Element[] = [...document.getElementsByClassName("transcript-sentence")]

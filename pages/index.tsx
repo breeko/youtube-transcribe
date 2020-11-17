@@ -37,11 +37,18 @@ const Main: React.FunctionComponent = () => {
           <Paragraph type="secondary">Video and audio, transcribed and attributed</Paragraph>
         </Space>
         <Divider/>
-        <Title level={2}>Featured Podcasts</Title>
-        <Row>
-          <Col span={8}>
+        <Title level={2}>Featured Programs</Title>
+        <Row gutter={[32,32]}>
+          <Col xs={12} sm={8}>
             <Card cover={<img src="https://i.ibb.co/ZmVL6kk/lex-fridman.webp" alt="Lex Fridman"/>}>
-              <Card.Meta title="Lex Fridman Podcast" />
+              {/* <Card.Meta title="Lex Fridman Podcast" /> */}
+              Lex Fridman Podcast
+              <br/>
+            </Card>
+          </Col>
+          <Col xs={12} sm={8}>
+            <Card cover={<img src="https://i.ibb.co/bg2DV1X/add.png" alt="Add yours"/>}>
+              <a href="mailto=sponsor@deep-chats.com">Contact us</a> to be featured
             </Card>
           </Col>
         </Row>
