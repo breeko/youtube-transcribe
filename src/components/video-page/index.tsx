@@ -1,4 +1,4 @@
-import { Divider, Spin } from "antd"
+import { Divider, message, Spin } from "antd"
 import { Auth } from "aws-amplify"
 import parse from 'html-react-parser'
 import { useRouter } from "next/dist/client/router"
@@ -11,7 +11,6 @@ import Player from "./player"
 
 interface VideoInfo {
   name: string
-  speakerMapping: Map<string, SpeakerMappingInput>
   videoPath: string
   transcript: string
 }
@@ -22,6 +21,7 @@ const VideoPageInner: React.FunctionComponent = () => {
   const [innerRaw, setInnerRaw] = React.useState<string>()
   const [isAdmin, setIsAdmin] = React.useState(false)
   const [inner, setInner] = React.useState<JSX.Element|JSX.Element[]>()
+  const [speakers, setSpeakers] = React.useState<string[]>([])
 
   const innerRef = React.useRef<HTMLDivElement>(null)
 
@@ -30,12 +30,14 @@ const VideoPageInner: React.FunctionComponent = () => {
 
   const router = useRouter()
 
+  const parseSpeaker = (e: Element) => e.innerHTML.trim().split(" ").slice(1).join(" ")
+
   React.useEffect(() => {
     const { video, t } = router.query
     if (video === undefined) { return }
     if (typeof t === "string") {
       const s = Number.parseFloat(t)
-      playerContainer.seekTo(s)
+      playerContainer.setHighlightedSeconds(s)
     }
     const videoId = typeof video === "string" ? video : video.join("/")
 
@@ -43,9 +45,7 @@ const VideoPageInner: React.FunctionComponent = () => {
       const name = info.name
       const videoPath = info.videoPath
       const transcript = info.transcript
-      const speakerMapping = new Map<string, SpeakerMappingInput>()
-      info.speakers.forEach(s => speakerMapping.set(s.speaker, s))
-      const i = {name, speakerMapping, videoPath, transcript}
+      const i = {name, videoPath, transcript}
       setVideoInfo(i)
       document.title = `Deep Chats: ${name}`
       downloadFromS3(transcript).then(t => setInnerRaw(t))
@@ -54,18 +54,25 @@ const VideoPageInner: React.FunctionComponent = () => {
 
 
   React.useEffect(() => {
+    // setup inner html
     if (inner === undefined || !playerContainer.ready || !isLoading) { return }
     const transcriptLinks: Element[] = [...document.getElementsByClassName("transcript-link")]
+    const newSpeakers = new Set<string>()
     transcriptLinks.forEach(e => {
       const seconds = Number(e.getAttribute("data-start"))
       if (!isNaN(seconds)) {
         e.addEventListener("click", () => playerContainer.seekTo(seconds))
       }
+
+      const s = parseSpeaker(e)
+      newSpeakers.add(s)
     })
+    setSpeakers([...newSpeakers])
     setIsLoading(false)
   }, [inner, playerContainer.ready])
 
   React.useEffect(() => {
+    if (playerContainer.highlightedSeconds === undefined) { return }
     const elems: Element[] = [...document.getElementsByClassName("transcript-sentence")]
     const toFind = Math.floor(playerContainer.highlightedSeconds * 100) / 100
     const toHighlightIdx = elems.findIndex(e => {
@@ -110,13 +117,12 @@ const VideoPageInner: React.FunctionComponent = () => {
         ...document.getElementsByClassName("transcript-link")
       ]
       editable.forEach(e => {
-        e.addEventListener("click", (ev) => {
+        e.addEventListener("click", () => {
           e.setAttribute("contenteditable", "true")
         })
-        e.addEventListener("blur", (ev) => {
+        e.addEventListener("blur", () => {
           e.removeAttribute("contenteditable")
         })
-        // e.setAttribute("contenteditable", "true")
       })
     }
   }, [isAdmin, isLoading])
@@ -126,6 +132,34 @@ const VideoPageInner: React.FunctionComponent = () => {
       const clean = innerRef.current.innerHTML.replace(/contenteditable="true"/g, "")
       saveToS3(videoInfo.transcript, clean)
     }
+  }
+
+  const handleEditSpeakerMappings = () => {
+    modalContainer.setModalProps({
+      key: "edit-mappings",
+      speakers,
+      onSuccess: (s) => updateSpeakerMapping(s)
+    })
+  }
+
+  const updateSpeakerMapping = (speakers: Object) => {
+    const orig = [...document.getElementsByClassName("transcript-link")]
+    const newSpeakers = new Set<string>()
+    let ct = 0
+    Object.entries(speakers).forEach(([prior, updated]) => {
+      orig.forEach(o => {
+        const s = parseSpeaker(o)
+        if (s === prior) {
+          o.innerHTML = o.innerHTML.replace(prior, updated)
+          newSpeakers.add(updated)
+          ct += 1
+        } else {
+          newSpeakers.add(s)
+        }
+      })
+    })
+    setSpeakers([...newSpeakers])
+    message.success(`Renamed ${ct} speakers`)
   }
 
   const handleAuth = (action: "login" | "logout") => {
@@ -147,6 +181,7 @@ const VideoPageInner: React.FunctionComponent = () => {
           videoId={videoInfo?.videoPath}
           save={isAdmin ? handleSave : undefined}
           handleAuth={handleAuth}
+          handleEditSpeakerMappings={handleEditSpeakerMappings}
         />
         <Divider style={{marginTop: "70px"}}/>
         <div ref={innerRef}>

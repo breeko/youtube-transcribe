@@ -1,6 +1,8 @@
-import { Card } from "antd"
+import { Card, Typography } from "antd"
 import { useRouter } from "next/dist/client/router"
 import React from "react"
+
+const { Paragraph } = Typography
 
 interface VideoCardProps {
   video: Video
@@ -15,9 +17,11 @@ const VideoCard: React.FunctionComponent<VideoCardProps> = ({ video, defaultImag
       hoverable
       cover={<img src={video.image || defaultImage} />}
       onClick={() => router.push(`videos/${video.id}`)}
-      style={{height: "100%"}}
+      className="media-card"
+      size="small"
     >
-      {video.name}
+      <Paragraph>{video.name}</Paragraph>
+      <Paragraph type="secondary">Published: {video.published}</Paragraph>
     </Card>
   )
 }

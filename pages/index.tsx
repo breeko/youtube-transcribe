@@ -2,6 +2,7 @@ import { Card, Col, Divider, Row, Space, Spin, Typography } from "antd"
 import { useRouter } from "next/dist/client/router"
 import Link from "next/link"
 import React from "react"
+import { SiGofundme } from "react-icons/si"
 import AppLayout from "../src/AppLayout"
 import { listVideo } from "../src/utils/apiUtils"
 
@@ -41,12 +42,14 @@ const Main: React.FunctionComponent = () => {
         </Space>
         <Divider/>
         <Title level={2}>Featured Programs</Title>
-        <Row gutter={[32,32]} className="padded">
+        <Row gutter={[32,32]} className="padded" justify="space-around">
           <Col xs={12} sm={8}>
             <Card
               hoverable
               cover={<img src="https://i.ibb.co/ZmVL6kk/lex-fridman.webp" alt="Lex Fridman"/>}
               onClick={() => router.push("/lex")}
+              size="small"
+              className="media-card"
             >
               
               Lex Fridman Podcast
@@ -57,11 +60,21 @@ const Main: React.FunctionComponent = () => {
               hoverable
               cover={<img src="https://i.ibb.co/bg2DV1X/add.png" alt="Add yours"/>}
               onClick={() => window.open("mailto:feature@deep-chats.com")}
+              size="small"
+              className="media-card"
             >
               <a href="mailto=feature@deep-chats.com">Contact us</a> to be featured
             </Card>
           </Col>
         </Row>
+        <Divider />
+        <a href="https://www.gofundme.com/f/transcribe-lex-fridman-podcasts">
+          <SiGofundme size={60}/>
+          <Paragraph>
+              Sponsor transcription of all Lex Fridman Podcast episodes (at cost)
+          </Paragraph>
+        </a>
+        
         <Divider />
         <Spin spinning={isLoading}>
           <Title level={3}>Latest Videos</Title>
@@ -80,6 +93,7 @@ const Main: React.FunctionComponent = () => {
             )
           })}
         </Space>
+        <Divider />
       </div>
     </AppLayout>
   )

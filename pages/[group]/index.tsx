@@ -27,7 +27,7 @@ const GroupPage: React.FunctionComponent = () => {
         <div className="main-page">
           <Title>{media?.name}</Title>
           <Divider type="horizontal"/>
-          <Row className="padded" gutter={[32, 32]}>
+          <Row className="padded" gutter={[32, 32]} justify="space-around">
           {media?.videos.map(v => {
             return(
               <Col xs={24} sm={12} md={8}>

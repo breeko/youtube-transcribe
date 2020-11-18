@@ -2,14 +2,23 @@
 
 import React from "react"
 import { createContainer } from "unstated-next"
+import { SpeakerMappingInput } from "../API"
 import LoginModal from "../modals/login/LoginModal"
+import SpeakerMappingsModal from "../modals/speaker-mappings"
 
 interface SigninProps {
   key: "signin"
   onSuccess: () => void
 }
 
-type ModalProps = SigninProps
+interface EditMappingsProps {
+  key: "edit-mappings"
+  speakers: string[]
+  onSuccess: (mapping: Object) => void
+}
+
+
+type ModalProps = SigninProps | EditMappingsProps
 
 const useModalContainer = () => {
   const [modalProps, setModalProps] = React.useState<ModalProps | undefined>(undefined)
@@ -19,19 +28,26 @@ const useModalContainer = () => {
     if (modalProps === undefined) {
       setModal(null)
     } else {
+      let m: JSX.Element = null
       switch(modalProps.key) {
         case "signin":
-          const m = <LoginModal
+          m = <LoginModal
             onOk={() => setModalProps(undefined)}
             onSuccess={modalProps.onSuccess}
             action="signin"
           />
-          setModal(m)
+          break
+        case "edit-mappings":
+          m = <SpeakerMappingsModal
+            onCancel={() => setModalProps(undefined)}
+            onSuccess={modalProps.onSuccess}
+            speakers={modalProps.speakers}
+          />
           break
         default:
-          setModal(null)
           break
       }
+      setModal(m)
     }
   }, [modalProps])
 
