@@ -16,7 +16,7 @@ const VideoCard: React.FunctionComponent<VideoCardProps> = ({ video, defaultImag
     <Card
       hoverable
       cover={<img src={video.image || defaultImage} />}
-      onClick={() => router.push(`/${video.id}`)}
+      onClick={() => router.push(`/programs/${video.id}`)}
       className="media-card"
       size="small"
     >

@@ -2,9 +2,9 @@ import { Col, Divider, Row, Spin } from "antd"
 import Title from "antd/lib/typography/Title"
 import { useRouter } from "next/dist/client/router"
 import React from "react"
-import AppLayout from "../../src/AppLayout"
-import VideoCard from "../../src/components/videos-page/video-card"
-import { getMediaFull } from "../../src/utils/apiUtils"
+import AppLayout from "../../../src/AppLayout"
+import VideoCard from "../../../src/components/videos-page/video-card"
+import { getMediaFull } from "../../../src/utils/apiUtils"
 
 const GroupPage: React.FunctionComponent = () => {
   const [media, setMedia] = React.useState<MediaFull>()

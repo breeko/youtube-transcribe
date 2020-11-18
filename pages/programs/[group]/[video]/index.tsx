@@ -1,8 +1,8 @@
 import _ from "lodash"
 import React from "react"
-import AppLayout from "../../../src/AppLayout"
-import VideoPageInner from "../../../src/components/video-page"
-import PlayerContainer from "../../../src/containers/player-container"
+import AppLayout from "../../../../src/AppLayout"
+import VideoPageInner from "../../../../src/components/video-page"
+import PlayerContainer from "../../../../src/containers/player-container"
 
 const VideoPage: React.FunctionComponent = () => {
 

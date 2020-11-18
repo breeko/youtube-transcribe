@@ -47,11 +47,10 @@ const Main: React.FunctionComponent = () => {
             <Card
               hoverable
               cover={<img src="https://i.ibb.co/ZmVL6kk/lex-fridman.webp" alt="Lex Fridman"/>}
-              onClick={() => router.push("/lex")}
+              onClick={() => router.push("/programs/lex")}
               size="small"
               className="media-card"
             >
-              
               Lex Fridman Podcast
             </Card>
           </Col>
@@ -82,9 +81,9 @@ const Main: React.FunctionComponent = () => {
         <Space direction="vertical" >
           {latest.map(m => {
             return (
-              <Row key={m.path} gutter={[16, 16]}>
+              <Row key={`programs/${m.path}`} gutter={[16, 16]}>
                 <Col span={24}>
-                  <Link href={ m.path }>
+                  <Link href={ `programs/${m.path}` }>
                     <a style={{color: "inherit"}}>{m.name}</a>
                   </Link>
                 </Col>
