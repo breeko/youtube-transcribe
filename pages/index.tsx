@@ -81,11 +81,10 @@ const Main: React.FunctionComponent = () => {
         </Spin>
         <Space direction="vertical" >
           {latest.map(m => {
-            const pathname = `videos/${m.path}`
             return (
-              <Row key={pathname} gutter={[16, 16]}>
+              <Row key={m.path} gutter={[16, 16]}>
                 <Col span={24}>
-                  <Link href={ pathname }>
+                  <Link href={ m.path }>
                     <a style={{color: "inherit"}}>{m.name}</a>
                   </Link>
                 </Col>

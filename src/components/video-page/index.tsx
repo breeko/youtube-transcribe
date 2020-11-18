@@ -33,13 +33,14 @@ const VideoPageInner: React.FunctionComponent = () => {
   const parseSpeaker = (e: Element) => e.innerHTML.trim().split(" ").slice(1).join(" ")
 
   React.useEffect(() => {
-    const { video, t } = router.query
-    if (video === undefined) { return }
+    const { group, video, t } = router.query
+    if (typeof video !== "string" || typeof video !== "string") { return }
     if (typeof t === "string") {
       const s = Number.parseFloat(t)
       playerContainer.setHighlightedSeconds(s)
     }
-    const videoId = typeof video === "string" ? video : video.join("/")
+
+    const videoId = `${group}/${video}`
 
     getVideo({id: videoId}).then(info => {
       const name = info.name
