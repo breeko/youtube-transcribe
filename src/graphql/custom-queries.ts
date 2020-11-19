@@ -13,11 +13,6 @@ export const getMediaFull = /* GraphQL */ `
           length
           published
           image
-          speakers {
-            name
-            speaker
-            style
-          }
           videoPath
           transcript
           createdAt

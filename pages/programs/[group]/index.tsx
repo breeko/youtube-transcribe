@@ -14,12 +14,15 @@ const GroupPage: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     const { group } = router.query
-    if (group === undefined) { return }
-    const id = typeof group === "string" ? group : group.join("/")
-    getMediaFull(id)
-      .then(m => setMedia(m))
-      .finally(() => setLoading(false))
-  })
+    if (group === undefined) { router.push("/404") }
+    else {
+      const id = typeof group === "string" ? group : group.join("/")
+      getMediaFull(id)
+        .then(m => setMedia(m))
+        .catch(() => router.push("/"))
+        .finally(() => setLoading(false))
+    }
+  }, [])
 
   return(
     <AppLayout>

@@ -62,13 +62,9 @@ export const createVideo = /* GraphQL */ `
       id
       name
       image
-      speakers {
-        speaker
-        name
-        style
-      }
       videoPath
       transcript
+      created
       published
       length
       description
@@ -80,6 +76,9 @@ export const createVideo = /* GraphQL */ `
         image
         createdAt
         updatedAt
+      }
+      editors {
+        nextToken
       }
     }
   }
@@ -93,13 +92,9 @@ export const updateVideo = /* GraphQL */ `
       id
       name
       image
-      speakers {
-        speaker
-        name
-        style
-      }
       videoPath
       transcript
+      created
       published
       length
       description
@@ -111,6 +106,9 @@ export const updateVideo = /* GraphQL */ `
         image
         createdAt
         updatedAt
+      }
+      editors {
+        nextToken
       }
     }
   }
@@ -124,13 +122,9 @@ export const deleteVideo = /* GraphQL */ `
       id
       name
       image
-      speakers {
-        speaker
-        name
-        style
-      }
       videoPath
       transcript
+      created
       published
       length
       description
@@ -140,6 +134,156 @@ export const deleteVideo = /* GraphQL */ `
         id
         name
         image
+        createdAt
+        updatedAt
+      }
+      editors {
+        nextToken
+      }
+    }
+  }
+`;
+export const createUser = /* GraphQL */ `
+  mutation CreateUser(
+    $input: CreateUserInput!
+    $condition: ModelUserConditionInput
+  ) {
+    createUser(input: $input, condition: $condition) {
+      id
+      email
+      credits
+      createdAt
+      updatedAt
+      videos {
+        nextToken
+      }
+    }
+  }
+`;
+export const updateUser = /* GraphQL */ `
+  mutation UpdateUser(
+    $input: UpdateUserInput!
+    $condition: ModelUserConditionInput
+  ) {
+    updateUser(input: $input, condition: $condition) {
+      id
+      email
+      credits
+      createdAt
+      updatedAt
+      videos {
+        nextToken
+      }
+    }
+  }
+`;
+export const deleteUser = /* GraphQL */ `
+  mutation DeleteUser(
+    $input: DeleteUserInput!
+    $condition: ModelUserConditionInput
+  ) {
+    deleteUser(input: $input, condition: $condition) {
+      id
+      email
+      credits
+      createdAt
+      updatedAt
+      videos {
+        nextToken
+      }
+    }
+  }
+`;
+export const createVideoEditor = /* GraphQL */ `
+  mutation CreateVideoEditor(
+    $input: CreateVideoEditorInput!
+    $condition: ModelVideoEditorConditionInput
+  ) {
+    createVideoEditor(input: $input, condition: $condition) {
+      id
+      createdAt
+      updatedAt
+      video {
+        id
+        name
+        image
+        videoPath
+        transcript
+        created
+        published
+        length
+        description
+        createdAt
+        updatedAt
+      }
+      editor {
+        id
+        email
+        credits
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
+export const updateVideoEditor = /* GraphQL */ `
+  mutation UpdateVideoEditor(
+    $input: UpdateVideoEditorInput!
+    $condition: ModelVideoEditorConditionInput
+  ) {
+    updateVideoEditor(input: $input, condition: $condition) {
+      id
+      createdAt
+      updatedAt
+      video {
+        id
+        name
+        image
+        videoPath
+        transcript
+        created
+        published
+        length
+        description
+        createdAt
+        updatedAt
+      }
+      editor {
+        id
+        email
+        credits
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
+export const deleteVideoEditor = /* GraphQL */ `
+  mutation DeleteVideoEditor(
+    $input: DeleteVideoEditorInput!
+    $condition: ModelVideoEditorConditionInput
+  ) {
+    deleteVideoEditor(input: $input, condition: $condition) {
+      id
+      createdAt
+      updatedAt
+      video {
+        id
+        name
+        image
+        videoPath
+        transcript
+        created
+        published
+        length
+        description
+        createdAt
+        updatedAt
+      }
+      editor {
+        id
+        email
+        credits
         createdAt
         updatedAt
       }

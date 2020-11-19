@@ -57,7 +57,12 @@ const Main: React.FunctionComponent = () => {
           <Col xs={12} sm={8}>
             <Card
               hoverable
-              cover={<img src="https://i.ibb.co/bg2DV1X/add.png" alt="Add yours"/>}
+              cover={
+                <img
+                  style={{padding: "20px"}}
+                  src="https://i.ibb.co/bg2DV1X/add.png"
+                  alt="Add yours"
+                />}
               onClick={() => window.open("mailto:feature@deep-chats.com")}
               size="small"
               className="media-card"

@@ -16,7 +16,6 @@ interface Video {
   name: string;
   length: number;
   published: string;
-  speakers: SpeakerMapping;
   image: string | null;
   videoPath: string;
   transcript: string

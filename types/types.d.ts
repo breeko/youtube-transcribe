@@ -12,8 +12,13 @@ interface Word {
   end?: number
 }
 
-type SpeakerMapping = Map<string, SpeakerMappingInput>
 declare module "*.svg" {
   const content: string
   export default content
+}
+
+interface VideoInfo {
+  name: string
+  videoPath: string
+  transcript: string
 }

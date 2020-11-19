@@ -2,7 +2,6 @@
 
 import React from "react"
 import { createContainer } from "unstated-next"
-import { SpeakerMappingInput } from "../API"
 import LoginModal from "../modals/login/LoginModal"
 import SpeakerMappingsModal from "../modals/speaker-mappings"
 

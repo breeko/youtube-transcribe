@@ -34,34 +34,6 @@ export const getMedia = /* GraphQL */ `
     }
   }
 `;
-export const getVideo = /* GraphQL */ `
-  query GetVideo($id: ID!) {
-    getVideo(id: $id) {
-      id
-      name
-      image
-      speakers {
-        speaker
-        name
-        style
-      }
-      videoPath
-      transcript
-      published
-      length
-      description
-      createdAt
-      updatedAt
-      media {
-        id
-        name
-        image
-        createdAt
-        updatedAt
-      }
-    }
-  }
-`;
 export const listVideos = /* GraphQL */ `
   query ListVideos(
     $filter: ModelVideoFilterInput
@@ -75,6 +47,7 @@ export const listVideos = /* GraphQL */ `
         image
         videoPath
         transcript
+        created
         published
         length
         description
@@ -82,6 +55,65 @@ export const listVideos = /* GraphQL */ `
         updatedAt
       }
       nextToken
+    }
+  }
+`;
+export const getVideo = /* GraphQL */ `
+  query GetVideo($id: ID!) {
+    getVideo(id: $id) {
+      id
+      name
+      image
+      videoPath
+      transcript
+      created
+      published
+      length
+      description
+      createdAt
+      updatedAt
+      media {
+        id
+        name
+        image
+        createdAt
+        updatedAt
+      }
+      editors {
+        nextToken
+      }
+    }
+  }
+`;
+export const listUsers = /* GraphQL */ `
+  query ListUsers(
+    $filter: ModelUserFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listUsers(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        email
+        credits
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const getUser = /* GraphQL */ `
+  query GetUser($id: ID!) {
+    getUser(id: $id) {
+      id
+      email
+      credits
+      createdAt
+      updatedAt
+      videos {
+        nextToken
+      }
     }
   }
 `;

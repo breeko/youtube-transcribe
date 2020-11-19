@@ -9,12 +9,6 @@ type Media @model
     videos: [Video] @connection(name: "Videos")
   }
 
-type SpeakerMapping {
-  speaker: String!
-  name: String!
-  style: String
-}
-
 type Video @model
   @auth(rules: [
     { allow: public, operations: [read] }
@@ -24,10 +18,32 @@ type Video @model
   name: String!
   media: Media! @connection(name: "Videos")
   image: String
-  speakers: [SpeakerMapping]
   videoPath: String!
   transcript: String!
+  created: AWSDate
   published: AWSDate!
   length: Int!
   description: String
+  editors: [VideoEditor] @connection(name: "VideoEditors")
+}
+
+type User @model
+  @auth(rules: [
+    { allow: public, operations: [read] }
+    { allow: groups, groups: ["admin"] }
+  ]) {
+    id: ID!
+    email: String!
+    videos: [VideoEditor] @connection(name: "UserEditors")
+    credits: Float!
+  }
+
+type VideoEditor @model(queries: null)
+  @auth(rules: [
+    { allow: public, operations: [read] }
+    { allow: groups, groups: ["admin"] }
+  ]) {
+    id: ID!
+    video: Video! @connection(name: "VideoEditors")
+    editor: User! @connection(name: "UserEditors")
 }

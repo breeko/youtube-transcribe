@@ -3,25 +3,26 @@ import { Auth } from "aws-amplify"
 import parse from 'html-react-parser'
 import { useRouter } from "next/dist/client/router"
 import React from "react"
-import { SpeakerMappingInput } from "../../API"
+import { VideoInfo } from "../../../types/types"
 import ModalContainer from "../../containers/modal-container"
 import PlayerContainer from "../../containers/player-container"
-import { downloadFromS3, getVideo, saveToS3 } from "../../utils/apiUtils"
+import { saveToS3 } from "../../utils/apiUtils"
 import Player from "./player"
 
-interface VideoInfo {
-  name: string
-  videoPath: string
-  transcript: string
+interface VideoPageInnerProps {
+  videoInfo: VideoInfo
+  innerRaw: string
+  start: number | undefined
+
 }
 
-const VideoPageInner: React.FunctionComponent = () => {
-  const [videoInfo, setVideoInfo] = React.useState<VideoInfo>()
-  const [isLoading, setIsLoading] = React.useState(true)
-  const [innerRaw, setInnerRaw] = React.useState<string>()
+const VideoPageInner: React.FunctionComponent<VideoPageInnerProps> = (props) => {
+  const { videoInfo, innerRaw, start } = props
+
   const [isAdmin, setIsAdmin] = React.useState(false)
   const [inner, setInner] = React.useState<JSX.Element|JSX.Element[]>()
   const [speakers, setSpeakers] = React.useState<string[]>([])
+  const [isLoading, setIsLoading] = React.useState(true)
 
   const innerRef = React.useRef<HTMLDivElement>(null)
 
@@ -33,30 +34,23 @@ const VideoPageInner: React.FunctionComponent = () => {
   const parseSpeaker = (e: Element) => e.innerHTML.trim().split(" ").slice(1).join(" ")
 
   React.useEffect(() => {
-    const { group, video, t } = router.query
-    if (typeof video !== "string" || typeof video !== "string") { return }
-    if (typeof t === "string") {
-      const s = Number.parseFloat(t)
-      playerContainer.setHighlightedSeconds(s)
+    if (start) {
+      playerContainer.setHighlightedSeconds(start)
     }
-
-    const videoId = `${group}/${video}`
-
-    getVideo({id: videoId}).then(info => {
-      const name = info.name
-      const videoPath = info.videoPath
-      const transcript = info.transcript
-      const i = {name, videoPath, transcript}
-      setVideoInfo(i)
-      document.title = `Deep Chats: ${name}`
-      downloadFromS3(transcript).then(t => setInnerRaw(t))
+    setInner(parse(innerRaw))
+    Auth.currentAuthenticatedUser()
+      .then((u) => {
+        const groups = u.signInUserSession.accessToken.payload["cognito:groups"]
+        const admin = groups.find(g => g === "admin") !== -1
+        setIsAdmin(admin)
       })
-  }, [router.query])
+      .catch(() => setIsAdmin(false))
+  }, [])
 
 
   React.useEffect(() => {
     // setup inner html
-    if (inner === undefined || !playerContainer.ready || !isLoading) { return }
+    if (inner === undefined || !playerContainer.ready) { return }
     const transcriptLinks: Element[] = [...document.getElementsByClassName("transcript-link")]
     const newSpeakers = new Set<string>()
     transcriptLinks.forEach(e => {
@@ -89,27 +83,9 @@ const VideoPageInner: React.FunctionComponent = () => {
         behavior: 'auto',
         block: 'center',
         inline: 'center'
-
       })
     }
   }, [playerContainer.highlightedSeconds])
-
-
-  React.useEffect(() => {
-    if (innerRaw) {
-      setInner(parse(innerRaw))
-    }
-  }, [innerRaw])
-
-  React.useEffect(() => {
-    Auth.currentAuthenticatedUser()
-      .then((u) => {
-        const groups = u.signInUserSession.accessToken.payload["cognito:groups"]
-        const admin = groups.find(g => g === "admin") !== -1
-        setIsAdmin(admin)
-      })
-      .catch(() => setIsAdmin(false))
-  }, [])
 
   React.useEffect(() => {
     if (isAdmin && !isLoading) {

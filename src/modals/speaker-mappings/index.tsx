@@ -1,6 +1,5 @@
 import { Form, Input, Modal } from "antd";
 import React from "react"
-import { SpeakerMappingInput } from "../../API";
 
 const formItemLayout = {
   labelCol: {
