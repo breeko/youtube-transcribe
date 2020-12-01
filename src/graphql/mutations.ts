@@ -63,6 +63,7 @@ export const createVideo = /* GraphQL */ `
       name
       image
       videoPath
+      audioPath
       transcript
       created
       published
@@ -77,8 +78,11 @@ export const createVideo = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      editors {
-        nextToken
+      owner {
+        id
+        email
+        createdAt
+        updatedAt
       }
     }
   }
@@ -93,6 +97,7 @@ export const updateVideo = /* GraphQL */ `
       name
       image
       videoPath
+      audioPath
       transcript
       created
       published
@@ -107,8 +112,11 @@ export const updateVideo = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      editors {
-        nextToken
+      owner {
+        id
+        email
+        createdAt
+        updatedAt
       }
     }
   }
@@ -123,6 +131,7 @@ export const deleteVideo = /* GraphQL */ `
       name
       image
       videoPath
+      audioPath
       transcript
       created
       published
@@ -137,8 +146,11 @@ export const deleteVideo = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      editors {
-        nextToken
+      owner {
+        id
+        email
+        createdAt
+        updatedAt
       }
     }
   }
@@ -151,7 +163,6 @@ export const createUser = /* GraphQL */ `
     createUser(input: $input, condition: $condition) {
       id
       email
-      credits
       createdAt
       updatedAt
       videos {
@@ -168,7 +179,6 @@ export const updateUser = /* GraphQL */ `
     updateUser(input: $input, condition: $condition) {
       id
       email
-      credits
       createdAt
       updatedAt
       videos {
@@ -185,107 +195,10 @@ export const deleteUser = /* GraphQL */ `
     deleteUser(input: $input, condition: $condition) {
       id
       email
-      credits
       createdAt
       updatedAt
       videos {
         nextToken
-      }
-    }
-  }
-`;
-export const createVideoEditor = /* GraphQL */ `
-  mutation CreateVideoEditor(
-    $input: CreateVideoEditorInput!
-    $condition: ModelVideoEditorConditionInput
-  ) {
-    createVideoEditor(input: $input, condition: $condition) {
-      id
-      createdAt
-      updatedAt
-      video {
-        id
-        name
-        image
-        videoPath
-        transcript
-        created
-        published
-        length
-        description
-        createdAt
-        updatedAt
-      }
-      editor {
-        id
-        email
-        credits
-        createdAt
-        updatedAt
-      }
-    }
-  }
-`;
-export const updateVideoEditor = /* GraphQL */ `
-  mutation UpdateVideoEditor(
-    $input: UpdateVideoEditorInput!
-    $condition: ModelVideoEditorConditionInput
-  ) {
-    updateVideoEditor(input: $input, condition: $condition) {
-      id
-      createdAt
-      updatedAt
-      video {
-        id
-        name
-        image
-        videoPath
-        transcript
-        created
-        published
-        length
-        description
-        createdAt
-        updatedAt
-      }
-      editor {
-        id
-        email
-        credits
-        createdAt
-        updatedAt
-      }
-    }
-  }
-`;
-export const deleteVideoEditor = /* GraphQL */ `
-  mutation DeleteVideoEditor(
-    $input: DeleteVideoEditorInput!
-    $condition: ModelVideoEditorConditionInput
-  ) {
-    deleteVideoEditor(input: $input, condition: $condition) {
-      id
-      createdAt
-      updatedAt
-      video {
-        id
-        name
-        image
-        videoPath
-        transcript
-        created
-        published
-        length
-        description
-        createdAt
-        updatedAt
-      }
-      editor {
-        id
-        email
-        credits
-        createdAt
-        updatedAt
       }
     }
   }

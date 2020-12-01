@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Form, Space } from "antd"
+import { Form, Space, Spin } from "antd"
 import { Store } from "antd/lib/form/interface"
 import { Auth } from "aws-amplify"
 import { FormItems } from "./FormItems"
@@ -10,12 +10,12 @@ interface LoginModalProps {
 }
 
 const layout = {
-  labelCol: { span: 2 },
-  wrapperCol: { span: 22 },
+  labelCol: { span: 24 },
+  wrapperCol: { span: 24 },
 }
 
 const tailLayout = {
-  wrapperCol: { span: 22 },
+  wrapperCol: { span: 24 },
 }
 
 const Signin: React.FunctionComponent<LoginModalProps> = (
@@ -23,6 +23,7 @@ const Signin: React.FunctionComponent<LoginModalProps> = (
 ) => {
   const [error, setError] = useState<string | undefined>()
   const [action, setAction] = useState<"signin" | "confirm" | "reset" | "resetConfirm">("signin")
+  const [isLoading, setIsLoading] = React.useState(false)
 
   const onFinish = (values: Store) => {
     switch (action) {
@@ -39,22 +40,26 @@ const Signin: React.FunctionComponent<LoginModalProps> = (
 
   const confirm = async (values: Store) => {
     try {
+      setIsLoading(true)
       await Auth.confirmSignUp(values.email, values.confirm)
       await Auth.signIn(values.email, values.password)
       setError(undefined)
       props.onSuccess()
       props.onOk()
     } catch (error) {
+      setIsLoading(false)
       setError(error.message)
     }
   }
   const signin = async (values: Store) => {
     try {
+      setIsLoading(true)
       await Auth.signIn(values.email, values.password)
       setError(undefined)
       props.onSuccess()
       props.onOk()
     } catch (error) {
+      setIsLoading(false)
       if (error.code === "UserNotConfirmedException") {
         Auth.resendSignUp(values.email)
         setAction("confirm")
@@ -103,17 +108,19 @@ const Signin: React.FunctionComponent<LoginModalProps> = (
       {(action === "confirm" || action == "resetConfirm") && FormItems.confirm}
       {error !== undefined && FormItems.error(error)}
       <Form.Item {...tailLayout}>
-        <Space direction="vertical" style={{ width: "100%" }}>
-          {FormItems.button("Login", () => setAction("signin"), "primary")}
-          {action === "confirm" &&
-            FormItems.button("Confirm", () => setAction("confirm"), "primary")}
-          {action === "resetConfirm" &&
-            FormItems.button(
-              "Reset password",
-              () => setAction("resetConfirm"),
-              "primary"
-            )}
-        </Space>
+        <Spin spinning={isLoading}>
+          <Space direction="vertical" style={{ width: "100%" }}>
+            {FormItems.button("Login", () => setAction("signin"), "primary")}
+            {action === "confirm" &&
+              FormItems.button("Confirm", () => setAction("confirm"), "primary")}
+            {action === "resetConfirm" &&
+              FormItems.button(
+                "Reset password",
+                () => setAction("resetConfirm"),
+                "primary"
+              )}
+          </Space>
+        </Spin>
       </Form.Item>
       <Form.Item {...tailLayout}>
         {FormItems.button("Forgot Password", () => setAction("reset"), "link")}

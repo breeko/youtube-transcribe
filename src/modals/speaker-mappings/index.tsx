@@ -32,7 +32,7 @@ const SpeakerMappingsModal: React.FunctionComponent<SpeakerMappingsModalProps> =
   }
 
   return(
-    <Modal okText="Save" onCancel={onCancel} onOk={handleFinish} visible={true} >
+    <Modal okText="Save" onCancel={onCancel} onOk={handleFinish} visible={true} title="Edit Speaker Mappings">
       <Form
         {...formItemLayout}
         name="Speaker Mappings"

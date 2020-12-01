@@ -41,7 +41,7 @@ export const FormItems = {
     </Form.Item>
   ),
   confirm: (
-    <Form.Item label="Confirmation" name="confirm">
+    <Form.Item label="Confirmation Code" name="confirm">
       <Input placeholder="Check your email" />
     </Form.Item>
   ),

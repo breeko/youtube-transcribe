@@ -8,7 +8,7 @@
 @yellow: #ffff99;
 
 .white {
-  color: @white;
+  color: @white !important;
 }
 
 .app-layout {
@@ -18,8 +18,8 @@
 
 .app-content {
   min-height: calc(100vh - 10px);
-  padding: 10px;
   background-color: white;
+  padding-top: 64px;
 }
 
 .app-header {
@@ -28,10 +28,21 @@
   padding-right: 20px;
   width: 100vw;
   font-size: 24px;
-  background-color: white;
-  // position: absolute;
+  position: absolute;
   z-index: 1;
+  background-color: transparent;
   // box-shadow: 0px 0px 5px 5px rgba(41,41,41,0.15);
+}
+
+.main-splash {
+  margin-top: -64px;
+  width: 100vw;
+  color: @white;
+  background: url('https://i.ibb.co/k8Kkknt/pexels-photo-1423600.jpg');
+  min-height: 100vh;
+  background-size: cover;
+  padding-top: 20vh;
+  background-position: bottom;
 }
 
 .app-footer {
@@ -55,12 +66,9 @@
   line-height: 1.6;
   font-size: 18px;
   color: @dark-grey;
-  // overflow-y: scroll;
   max-width: 800px;
   overflow: auto;
-  // overflow-x: hidden;
-  margin-right: -20px; // to keep scrollbar on the right
-  // flex: 1;
+  // margin-right: -20px; // to keep scrollbar on the right
 }
 
 .transcript-sentence {
@@ -69,6 +77,7 @@
 }
 
 .video-page-container {
+  margin-top: -54px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -76,20 +85,23 @@
 }
 
 .video-collapsed-row {
-  position: fixed;
   min-height: 50px;
   z-index: 1;
+}
+
+.fixed {
+  position: fixed;
 }
 
 .video-collapsed-container {
   text-align: center;
   border-style: solid;
-  max-height: 10vh;
+  max-height: 35vh;
   align-items: center;
   max-width: 600px;
   min-height: 50px;
   justify-content: space-between;
-  display: flex;
+  // display: flex;
   background-color: white;
   svg > {
     cursor: pointer;
@@ -192,3 +204,21 @@
 .wide {
   width: 100%;
 }
+
+.page-container {
+  padding: 10px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.red {
+  color: @red;
+}
+
+.sentence-action {
+  cursor: pointer;
+  margin-right: 10px;
+}
+

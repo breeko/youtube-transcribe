@@ -1,10 +1,10 @@
-import { API, graphqlOperation, Storage } from "aws-amplify"
 import { message } from "antd"
-import { GetMediaFullQuery, GetMediaFullQueryVariables, GetMediaQuery, GetMediaQueryVariables, GetVideoQuery, GetVideoQueryVariables, ListMediasQuery, ListMediasQueryVariables, ListVideosQuery, ListVideosQueryVariables } from "../API"
-import * as queries from '../../src/graphql/queries'
-import * as custom from '../../src/graphql/custom-queries'
-import { isDefined } from "./utils"
+import { API, graphqlOperation, Storage } from "aws-amplify"
 import _ from "lodash"
+import * as custom from '../../src/graphql/custom-queries'
+import * as queries from '../../src/graphql/queries'
+import { GetMediaFullQuery, GetUserFullQuery, GetUserFullQueryVariables, GetVideoQuery, GetVideoQueryVariables, ListMediasQuery, ListMediasQueryVariables, ListVideosQuery, ListVideosQueryVariables } from "../API"
+import { isDefined } from "./utils"
 
 const noLimit = { limit: 65536 }
 
@@ -60,5 +60,13 @@ export const getMediaFull = async (id: string): Promise<MediaFull | undefined> =
   const filteredVideos = m.data.getMedia?.videos?.items?.filter(isDefined) || []
   const videos = _.orderBy(filteredVideos, [i => i.name])
   const media = m.data.getMedia ? {...m.data.getMedia, videos} : undefined
+  return media
+}
+
+export const getUserFull = async (id: string) => {
+  const m = await API.graphql(graphqlOperation(custom.getUserFull, { id })) as {data: GetUserFullQuery}
+  const filteredVideos = m.data.getUser?.videos?.items?.filter(isDefined) || []
+  const videos = _.orderBy(filteredVideos, [i => i.name])
+  const media = m.data.getUser ? {...m.data.getUser, videos} : undefined
   return media
 }

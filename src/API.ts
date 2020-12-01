@@ -70,26 +70,24 @@ export type CreateVideoInput = {
   id?: string | null,
   name: string,
   image?: string | null,
-  speakers?: Array< SpeakerMappingInput | null > | null,
-  videoPath: string,
+  videoPath?: string | null,
+  audioPath?: string | null,
   transcript: string,
+  created?: string | null,
   published: string,
   length: number,
   description?: string | null,
-  videoMediaId: string,
-};
-
-export type SpeakerMappingInput = {
-  speaker: string,
-  name: string,
-  style?: string | null,
+  videoMediaId?: string | null,
+  videoOwnerId?: string | null,
 };
 
 export type ModelVideoConditionInput = {
   name?: ModelStringInput | null,
   image?: ModelStringInput | null,
   videoPath?: ModelStringInput | null,
+  audioPath?: ModelStringInput | null,
   transcript?: ModelStringInput | null,
+  created?: ModelStringInput | null,
   published?: ModelStringInput | null,
   length?: ModelIntInput | null,
   description?: ModelStringInput | null,
@@ -114,16 +112,54 @@ export type UpdateVideoInput = {
   id: string,
   name?: string | null,
   image?: string | null,
-  speakers?: Array< SpeakerMappingInput | null > | null,
   videoPath?: string | null,
+  audioPath?: string | null,
   transcript?: string | null,
+  created?: string | null,
   published?: string | null,
   length?: number | null,
   description?: string | null,
   videoMediaId?: string | null,
+  videoOwnerId?: string | null,
 };
 
 export type DeleteVideoInput = {
+  id?: string | null,
+};
+
+export type CreateUserInput = {
+  id?: string | null,
+  email: string,
+  credits: number,
+};
+
+export type ModelUserConditionInput = {
+  email?: ModelStringInput | null,
+  credits?: ModelFloatInput | null,
+  and?: Array< ModelUserConditionInput | null > | null,
+  or?: Array< ModelUserConditionInput | null > | null,
+  not?: ModelUserConditionInput | null,
+};
+
+export type ModelFloatInput = {
+  ne?: number | null,
+  eq?: number | null,
+  le?: number | null,
+  lt?: number | null,
+  ge?: number | null,
+  gt?: number | null,
+  between?: Array< number | null > | null,
+  attributeExists?: boolean | null,
+  attributeType?: ModelAttributeTypes | null,
+};
+
+export type UpdateUserInput = {
+  id: string,
+  email?: string | null,
+  credits?: number | null,
+};
+
+export type DeleteUserInput = {
   id?: string | null,
 };
 
@@ -157,13 +193,24 @@ export type ModelVideoFilterInput = {
   name?: ModelStringInput | null,
   image?: ModelStringInput | null,
   videoPath?: ModelStringInput | null,
+  audioPath?: ModelStringInput | null,
   transcript?: ModelStringInput | null,
+  created?: ModelStringInput | null,
   published?: ModelStringInput | null,
   length?: ModelIntInput | null,
   description?: ModelStringInput | null,
   and?: Array< ModelVideoFilterInput | null > | null,
   or?: Array< ModelVideoFilterInput | null > | null,
   not?: ModelVideoFilterInput | null,
+};
+
+export type ModelUserFilterInput = {
+  id?: ModelIDInput | null,
+  email?: ModelStringInput | null,
+  credits?: ModelFloatInput | null,
+  and?: Array< ModelUserFilterInput | null > | null,
+  or?: Array< ModelUserFilterInput | null > | null,
+  not?: ModelUserFilterInput | null,
 };
 
 export type GetMediaFullQueryVariables = {
@@ -187,13 +234,37 @@ export type GetMediaFullQuery = {
         length: number,
         published: string,
         image: string | null,
-        speakers:  Array< {
-          __typename: "SpeakerMapping",
-          name: string,
-          speaker: string,
-          style: string | null,
-        } | null > | null,
-        videoPath: string,
+        videoPath: string | null,
+        transcript: string,
+        createdAt: string,
+        updatedAt: string,
+      } | null > | null,
+    } | null,
+  } | null,
+};
+
+export type GetUserFullQueryVariables = {
+  id: string,
+};
+
+export type GetUserFullQuery = {
+  getUser:  {
+    __typename: "User",
+    id: string,
+    email: string,
+    credits: number,
+    createdAt: string,
+    updatedAt: string,
+    videos:  {
+      __typename: "ModelVideoConnection",
+      items:  Array< {
+        __typename: "Video",
+        id: string,
+        name: string,
+        length: number,
+        published: string,
+        image: string | null,
+        videoPath: string | null,
         transcript: string,
         createdAt: string,
         updatedAt: string,
@@ -273,14 +344,10 @@ export type CreateVideoMutation = {
     id: string,
     name: string,
     image: string | null,
-    speakers:  Array< {
-      __typename: "SpeakerMapping",
-      speaker: string,
-      name: string,
-      style: string | null,
-    } | null > | null,
-    videoPath: string,
+    videoPath: string | null,
+    audioPath: string | null,
     transcript: string,
+    created: string | null,
     published: string,
     length: number,
     description: string | null,
@@ -293,7 +360,15 @@ export type CreateVideoMutation = {
       image: string,
       createdAt: string,
       updatedAt: string,
-    },
+    } | null,
+    owner:  {
+      __typename: "User",
+      id: string,
+      email: string,
+      credits: number,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
   } | null,
 };
 
@@ -308,14 +383,10 @@ export type UpdateVideoMutation = {
     id: string,
     name: string,
     image: string | null,
-    speakers:  Array< {
-      __typename: "SpeakerMapping",
-      speaker: string,
-      name: string,
-      style: string | null,
-    } | null > | null,
-    videoPath: string,
+    videoPath: string | null,
+    audioPath: string | null,
     transcript: string,
+    created: string | null,
     published: string,
     length: number,
     description: string | null,
@@ -328,7 +399,15 @@ export type UpdateVideoMutation = {
       image: string,
       createdAt: string,
       updatedAt: string,
-    },
+    } | null,
+    owner:  {
+      __typename: "User",
+      id: string,
+      email: string,
+      credits: number,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
   } | null,
 };
 
@@ -343,14 +422,10 @@ export type DeleteVideoMutation = {
     id: string,
     name: string,
     image: string | null,
-    speakers:  Array< {
-      __typename: "SpeakerMapping",
-      speaker: string,
-      name: string,
-      style: string | null,
-    } | null > | null,
-    videoPath: string,
+    videoPath: string | null,
+    audioPath: string | null,
     transcript: string,
+    created: string | null,
     published: string,
     length: number,
     description: string | null,
@@ -363,7 +438,75 @@ export type DeleteVideoMutation = {
       image: string,
       createdAt: string,
       updatedAt: string,
-    },
+    } | null,
+    owner:  {
+      __typename: "User",
+      id: string,
+      email: string,
+      credits: number,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
+  } | null,
+};
+
+export type CreateUserMutationVariables = {
+  input: CreateUserInput,
+  condition?: ModelUserConditionInput | null,
+};
+
+export type CreateUserMutation = {
+  createUser:  {
+    __typename: "User",
+    id: string,
+    email: string,
+    credits: number,
+    createdAt: string,
+    updatedAt: string,
+    videos:  {
+      __typename: "ModelVideoConnection",
+      nextToken: string | null,
+    } | null,
+  } | null,
+};
+
+export type UpdateUserMutationVariables = {
+  input: UpdateUserInput,
+  condition?: ModelUserConditionInput | null,
+};
+
+export type UpdateUserMutation = {
+  updateUser:  {
+    __typename: "User",
+    id: string,
+    email: string,
+    credits: number,
+    createdAt: string,
+    updatedAt: string,
+    videos:  {
+      __typename: "ModelVideoConnection",
+      nextToken: string | null,
+    } | null,
+  } | null,
+};
+
+export type DeleteUserMutationVariables = {
+  input: DeleteUserInput,
+  condition?: ModelUserConditionInput | null,
+};
+
+export type DeleteUserMutation = {
+  deleteUser:  {
+    __typename: "User",
+    id: string,
+    email: string,
+    credits: number,
+    createdAt: string,
+    updatedAt: string,
+    videos:  {
+      __typename: "ModelVideoConnection",
+      nextToken: string | null,
+    } | null,
   } | null,
 };
 
@@ -417,14 +560,10 @@ export type GetVideoQuery = {
     id: string,
     name: string,
     image: string | null,
-    speakers:  Array< {
-      __typename: "SpeakerMapping",
-      speaker: string,
-      name: string,
-      style: string | null,
-    } | null > | null,
-    videoPath: string,
+    videoPath: string | null,
+    audioPath: string | null,
     transcript: string,
+    created: string | null,
     published: string,
     length: number,
     description: string | null,
@@ -437,7 +576,15 @@ export type GetVideoQuery = {
       image: string,
       createdAt: string,
       updatedAt: string,
-    },
+    } | null,
+    owner:  {
+      __typename: "User",
+      id: string,
+      email: string,
+      credits: number,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
   } | null,
 };
 
@@ -455,8 +602,10 @@ export type ListVideosQuery = {
       id: string,
       name: string,
       image: string | null,
-      videoPath: string,
+      videoPath: string | null,
+      audioPath: string | null,
       transcript: string,
+      created: string | null,
       published: string,
       length: number,
       description: string | null,
@@ -464,6 +613,46 @@ export type ListVideosQuery = {
       updatedAt: string,
     } | null > | null,
     nextToken: string | null,
+  } | null,
+};
+
+export type ListUsersQueryVariables = {
+  filter?: ModelUserFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListUsersQuery = {
+  listUsers:  {
+    __typename: "ModelUserConnection",
+    items:  Array< {
+      __typename: "User",
+      id: string,
+      email: string,
+      credits: number,
+      createdAt: string,
+      updatedAt: string,
+    } | null > | null,
+    nextToken: string | null,
+  } | null,
+};
+
+export type GetUserQueryVariables = {
+  id: string,
+};
+
+export type GetUserQuery = {
+  getUser:  {
+    __typename: "User",
+    id: string,
+    email: string,
+    credits: number,
+    createdAt: string,
+    updatedAt: string,
+    videos:  {
+      __typename: "ModelVideoConnection",
+      nextToken: string | null,
+    } | null,
   } | null,
 };
 
@@ -518,14 +707,10 @@ export type OnCreateVideoSubscription = {
     id: string,
     name: string,
     image: string | null,
-    speakers:  Array< {
-      __typename: "SpeakerMapping",
-      speaker: string,
-      name: string,
-      style: string | null,
-    } | null > | null,
-    videoPath: string,
+    videoPath: string | null,
+    audioPath: string | null,
     transcript: string,
+    created: string | null,
     published: string,
     length: number,
     description: string | null,
@@ -538,7 +723,15 @@ export type OnCreateVideoSubscription = {
       image: string,
       createdAt: string,
       updatedAt: string,
-    },
+    } | null,
+    owner:  {
+      __typename: "User",
+      id: string,
+      email: string,
+      credits: number,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
   } | null,
 };
 
@@ -548,14 +741,10 @@ export type OnUpdateVideoSubscription = {
     id: string,
     name: string,
     image: string | null,
-    speakers:  Array< {
-      __typename: "SpeakerMapping",
-      speaker: string,
-      name: string,
-      style: string | null,
-    } | null > | null,
-    videoPath: string,
+    videoPath: string | null,
+    audioPath: string | null,
     transcript: string,
+    created: string | null,
     published: string,
     length: number,
     description: string | null,
@@ -568,7 +757,15 @@ export type OnUpdateVideoSubscription = {
       image: string,
       createdAt: string,
       updatedAt: string,
-    },
+    } | null,
+    owner:  {
+      __typename: "User",
+      id: string,
+      email: string,
+      credits: number,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
   } | null,
 };
 
@@ -578,14 +775,10 @@ export type OnDeleteVideoSubscription = {
     id: string,
     name: string,
     image: string | null,
-    speakers:  Array< {
-      __typename: "SpeakerMapping",
-      speaker: string,
-      name: string,
-      style: string | null,
-    } | null > | null,
-    videoPath: string,
+    videoPath: string | null,
+    audioPath: string | null,
     transcript: string,
+    created: string | null,
     published: string,
     length: number,
     description: string | null,
@@ -598,6 +791,59 @@ export type OnDeleteVideoSubscription = {
       image: string,
       createdAt: string,
       updatedAt: string,
-    },
+    } | null,
+    owner:  {
+      __typename: "User",
+      id: string,
+      email: string,
+      credits: number,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
+  } | null,
+};
+
+export type OnCreateUserSubscription = {
+  onCreateUser:  {
+    __typename: "User",
+    id: string,
+    email: string,
+    credits: number,
+    createdAt: string,
+    updatedAt: string,
+    videos:  {
+      __typename: "ModelVideoConnection",
+      nextToken: string | null,
+    } | null,
+  } | null,
+};
+
+export type OnUpdateUserSubscription = {
+  onUpdateUser:  {
+    __typename: "User",
+    id: string,
+    email: string,
+    credits: number,
+    createdAt: string,
+    updatedAt: string,
+    videos:  {
+      __typename: "ModelVideoConnection",
+      nextToken: string | null,
+    } | null,
+  } | null,
+};
+
+export type OnDeleteUserSubscription = {
+  onDeleteUser:  {
+    __typename: "User",
+    id: string,
+    email: string,
+    credits: number,
+    createdAt: string,
+    updatedAt: string,
+    videos:  {
+      __typename: "ModelVideoConnection",
+      nextToken: string | null,
+    } | null,
   } | null,
 };

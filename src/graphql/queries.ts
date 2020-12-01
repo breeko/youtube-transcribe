@@ -34,30 +34,6 @@ export const getMedia = /* GraphQL */ `
     }
   }
 `;
-export const listVideos = /* GraphQL */ `
-  query ListVideos(
-    $filter: ModelVideoFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listVideos(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        name
-        image
-        videoPath
-        transcript
-        created
-        published
-        length
-        description
-        createdAt
-        updatedAt
-      }
-      nextToken
-    }
-  }
-`;
 export const getVideo = /* GraphQL */ `
   query GetVideo($id: ID!) {
     getVideo(id: $id) {
@@ -65,6 +41,7 @@ export const getVideo = /* GraphQL */ `
       name
       image
       videoPath
+      audioPath
       transcript
       created
       published
@@ -79,9 +56,37 @@ export const getVideo = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      editors {
-        nextToken
+      owner {
+        id
+        email
+        createdAt
+        updatedAt
       }
+    }
+  }
+`;
+export const listVideos = /* GraphQL */ `
+  query ListVideos(
+    $filter: ModelVideoFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listVideos(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        name
+        image
+        videoPath
+        audioPath
+        transcript
+        created
+        published
+        length
+        description
+        createdAt
+        updatedAt
+      }
+      nextToken
     }
   }
 `;
@@ -95,7 +100,6 @@ export const listUsers = /* GraphQL */ `
       items {
         id
         email
-        credits
         createdAt
         updatedAt
       }
@@ -108,7 +112,6 @@ export const getUser = /* GraphQL */ `
     getUser(id: $id) {
       id
       email
-      credits
       createdAt
       updatedAt
       videos {

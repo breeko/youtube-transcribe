@@ -16,15 +16,16 @@ type Video @model
   ]) {
   id: ID!
   name: String!
-  media: Media! @connection(name: "Videos")
+  media: Media @connection(name: "Videos")
   image: String
-  videoPath: String!
+  videoPath: String # youtube path
+  audioPath: String
   transcript: String!
   created: AWSDate
   published: AWSDate!
   length: Int!
   description: String
-  editors: [VideoEditor] @connection(name: "VideoEditors")
+  owner: User @connection(name: "Owner")
 }
 
 type User @model
@@ -34,16 +35,5 @@ type User @model
   ]) {
     id: ID!
     email: String!
-    videos: [VideoEditor] @connection(name: "UserEditors")
-    credits: Float!
+    videos: [Video] @connection(name: "Owner")
   }
-
-type VideoEditor @model(queries: null)
-  @auth(rules: [
-    { allow: public, operations: [read] }
-    { allow: groups, groups: ["admin"] }
-  ]) {
-    id: ID!
-    video: Video! @connection(name: "VideoEditors")
-    editor: User! @connection(name: "UserEditors")
-}

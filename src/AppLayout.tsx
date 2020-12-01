@@ -3,6 +3,7 @@ import React from "react"
 import AppFooter from "./AppFooter"
 import AppHeader from "./AppHeader"
 import ModalContainer from "./containers/modal-container"
+import PlayerContainer from "./containers/player-container"
 
 const { Content } = Layout
 
@@ -14,13 +15,15 @@ interface AppLayoutProps {
 const AppLayout: React.FunctionComponent<AppLayoutProps> = (props) => {
   return(
     <Layout className="app-layout">
-      <ModalContainer.Provider>
-        {props.hideHeader ? null : <AppHeader />}
-        <Content className="app-content">
-          {props.children}
-        </Content>
-        { props.hideFooter ? null : <AppFooter />}
-      </ModalContainer.Provider>
+      <PlayerContainer.Provider>
+        <ModalContainer.Provider>
+          {props.hideHeader ? null : <AppHeader />}
+          <Content className="app-content">
+            {props.children}
+          </Content>
+          { props.hideFooter ? null : <AppFooter />}
+        </ModalContainer.Provider>
+      </PlayerContainer.Provider>
     </Layout>
   )
 }

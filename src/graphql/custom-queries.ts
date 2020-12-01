@@ -22,3 +22,28 @@ export const getMediaFull = /* GraphQL */ `
     }
   }
 `
+
+export const getUserFull = /* GraphQL */ `
+  query GetUserFull($id: ID!) {
+    getUser(id: $id) {
+      id
+      email
+      credits
+      createdAt
+      updatedAt
+      videos {
+        items {
+          id
+          name
+          length
+          published
+          image
+          videoPath
+          transcript
+          createdAt
+          updatedAt
+        }
+      }
+    }
+  }
+`

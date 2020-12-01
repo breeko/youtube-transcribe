@@ -31,9 +31,9 @@ const LoginModal: React.FunctionComponent<LoginModalProps> = (
         <TabPane tab="Sign in" key="signin">
           <Signin onSuccess={props.onSuccess} onOk={props.onOk} />
         </TabPane>
-        {/* <TabPane tab="Sign up" key="signup">
+        <TabPane tab="Sign up" key="signup">
           <Signup onSuccess={props.onSuccess} onOk={props.onOk} />
-        </TabPane> */}
+        </TabPane>
       </Tabs>
     </Modal>
   )

@@ -51,6 +51,7 @@ export const onCreateVideo = /* GraphQL */ `
       name
       image
       videoPath
+      audioPath
       transcript
       created
       published
@@ -65,8 +66,11 @@ export const onCreateVideo = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      editors {
-        nextToken
+      owner {
+        id
+        email
+        createdAt
+        updatedAt
       }
     }
   }
@@ -78,6 +82,7 @@ export const onUpdateVideo = /* GraphQL */ `
       name
       image
       videoPath
+      audioPath
       transcript
       created
       published
@@ -92,8 +97,11 @@ export const onUpdateVideo = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      editors {
-        nextToken
+      owner {
+        id
+        email
+        createdAt
+        updatedAt
       }
     }
   }
@@ -105,6 +113,7 @@ export const onDeleteVideo = /* GraphQL */ `
       name
       image
       videoPath
+      audioPath
       transcript
       created
       published
@@ -119,8 +128,11 @@ export const onDeleteVideo = /* GraphQL */ `
         createdAt
         updatedAt
       }
-      editors {
-        nextToken
+      owner {
+        id
+        email
+        createdAt
+        updatedAt
       }
     }
   }
@@ -130,7 +142,6 @@ export const onCreateUser = /* GraphQL */ `
     onCreateUser {
       id
       email
-      credits
       createdAt
       updatedAt
       videos {
@@ -144,7 +155,6 @@ export const onUpdateUser = /* GraphQL */ `
     onUpdateUser {
       id
       email
-      credits
       createdAt
       updatedAt
       videos {
@@ -158,98 +168,10 @@ export const onDeleteUser = /* GraphQL */ `
     onDeleteUser {
       id
       email
-      credits
       createdAt
       updatedAt
       videos {
         nextToken
-      }
-    }
-  }
-`;
-export const onCreateVideoEditor = /* GraphQL */ `
-  subscription OnCreateVideoEditor {
-    onCreateVideoEditor {
-      id
-      createdAt
-      updatedAt
-      video {
-        id
-        name
-        image
-        videoPath
-        transcript
-        created
-        published
-        length
-        description
-        createdAt
-        updatedAt
-      }
-      editor {
-        id
-        email
-        credits
-        createdAt
-        updatedAt
-      }
-    }
-  }
-`;
-export const onUpdateVideoEditor = /* GraphQL */ `
-  subscription OnUpdateVideoEditor {
-    onUpdateVideoEditor {
-      id
-      createdAt
-      updatedAt
-      video {
-        id
-        name
-        image
-        videoPath
-        transcript
-        created
-        published
-        length
-        description
-        createdAt
-        updatedAt
-      }
-      editor {
-        id
-        email
-        credits
-        createdAt
-        updatedAt
-      }
-    }
-  }
-`;
-export const onDeleteVideoEditor = /* GraphQL */ `
-  subscription OnDeleteVideoEditor {
-    onDeleteVideoEditor {
-      id
-      createdAt
-      updatedAt
-      video {
-        id
-        name
-        image
-        videoPath
-        transcript
-        created
-        published
-        length
-        description
-        createdAt
-        updatedAt
-      }
-      editor {
-        id
-        email
-        credits
-        createdAt
-        updatedAt
       }
     }
   }

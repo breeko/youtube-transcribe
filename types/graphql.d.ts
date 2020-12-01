@@ -23,6 +23,18 @@ interface Video {
   updatedAt: string;
 }
 
+interface User {
+  __typename: "User";
+  id: string;
+  email: string;
+  credits: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface UserFull extends User {
+  videos: Video[]
+}
 
 interface VideoFull extends Video {
   media: Media
