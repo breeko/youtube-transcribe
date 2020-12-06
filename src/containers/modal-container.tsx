@@ -24,13 +24,14 @@ interface EditMappingsProps {
 interface TranscribeProps {
   key: "transcribe"
   title: string
-  videoId: string
+  id: string
   onSuccess: () => void
 }
 
 interface UploadProps {
   key: "upload"
   onSuccess: () => void
+  onCancel: () => void
 }
 
 interface CheckoutProps {
@@ -67,7 +68,7 @@ const useModalContainer = () => {
         case "transcribe":
           m = <TranscribeModal
             title={modalProps.title}
-            videoId={modalProps.videoId}
+            id={modalProps.id}
             onSuccess={modalProps.onSuccess}
             onCancel={() => setModalProps(undefined)}
           />
@@ -75,7 +76,7 @@ const useModalContainer = () => {
         case "upload":
           m = <UploadModal
             onSuccess={modalProps.onSuccess}
-            onCancel={() => setModalProps(undefined)}
+            onCancel={() => { modalProps.onCancel(); setModalProps(undefined) }}
           />
           break
         case "checkout":

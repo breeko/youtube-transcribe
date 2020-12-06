@@ -1,5 +1,6 @@
 import { Layout } from "antd"
 import React from "react"
+import AppContent from "./AppContent"
 import AppFooter from "./AppFooter"
 import AppHeader from "./AppHeader"
 import ModalContainer from "./containers/modal-container"
@@ -18,9 +19,9 @@ const AppLayout: React.FunctionComponent<AppLayoutProps> = (props) => {
       <PlayerContainer.Provider>
         <ModalContainer.Provider>
           {props.hideHeader ? null : <AppHeader />}
-          <Content className="app-content">
+          <AppContent>
             {props.children}
-          </Content>
+          </AppContent>
           { props.hideFooter ? null : <AppFooter />}
         </ModalContainer.Provider>
       </PlayerContainer.Provider>

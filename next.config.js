@@ -30,6 +30,7 @@ module.exports = withCSS({
             fs: "empty",
             net: "empty",
             tls: "empty",
+            child_process: "empty",
           }
         }
         config.module.rules.push({

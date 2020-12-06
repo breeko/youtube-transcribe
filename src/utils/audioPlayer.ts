@@ -7,6 +7,7 @@ export interface AudioPlayer {
   play: () => Promise<void>
   pause: () => void
   seekTo: (s: number) => void
+  stop: () => void
 }
 
 export const getAudioPlayer = (a: HTMLAudioElement): AudioPlayer => {
@@ -16,7 +17,8 @@ export const getAudioPlayer = (a: HTMLAudioElement): AudioPlayer => {
     play: () => a.play(),
     pause: () => a.pause(),
     seekTo: (s: number) => a.currentTime = s,
-    seconds: a.duration
+    seconds: a.duration,
+    stop: () => { a.src = "" }
   }
   return p
 }
@@ -28,7 +30,8 @@ export const getYoutubeAudioPlayer = (yt: YouTubePlayer): AudioPlayer => {
     play: () => Promise.resolve(yt.playVideo()),
     pause: () => yt.pauseVideo(),
     seekTo: (s: number) => yt.seekTo(s, true),
-    seconds: yt.getDuration()
+    seconds: yt.getDuration(),
+    stop: () => { /* */}
   }
   return p
 }

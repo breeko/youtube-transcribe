@@ -7,6 +7,7 @@ import ModalContainer from "./containers/modal-container"
 import { Auth } from "aws-amplify"
 import { useRouter } from "next/dist/client/router"
 import PlayerContainer from "./containers/player-container"
+import { AmplifySignOut } from "@aws-amplify/ui-react"
 
 const { Title } = Typography
 const { Header } = Layout
@@ -17,15 +18,17 @@ const AppHeader: React.FunctionComponent = () => {
 
   const router = useRouter()
 
-  React.useEffect(() => {
-    Auth.currentAuthenticatedUser()
+  const updateAuth = () => {
+    Auth.currentUserInfo()
       .then(() => setSignedIn(true))
       .catch(() => setSignedIn(false))
       .finally(() => setLoading(false))
+  }
+  React.useEffect(() => {
+    updateAuth()
   }, [])
 
   const modalContainer = ModalContainer.useContainer()
-  const bgPath = "https://images.pexels.com/photos/917494/pexels-photo-917494.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260"
   const home = router.pathname === "/"
   return(
     <Header className={home ? "app-header white" : "app-header"}>
@@ -39,7 +42,7 @@ const AppHeader: React.FunctionComponent = () => {
                 icon={<FiLogIn />}
                 type="ghost"
                 size="large"
-                onClick={() => modalContainer.setModalProps({key: "signin", action: "signin", onSuccess: () => setSignedIn(true)})} /> :
+                onClick={() => modalContainer.setModalProps({key: "signin", action: "signin", onSuccess: () => updateAuth()})} /> :
               <React.Fragment>
                 <Button
                   type="ghost"
@@ -50,7 +53,7 @@ const AppHeader: React.FunctionComponent = () => {
                   type="ghost"
                   size="large"
                   icon={<FiLogOut />}
-                  onClick={() => Auth.signOut().then(() => { message.info("Logged out"); setSignedIn(false); router.push("/") })} />
+                  onClick={() => Auth.signOut().then(() => { localStorage.clear(); message.info("Logged out"); setSignedIn(false); router.push("/") })} />
                   </React.Fragment> :
               <Spin />
         }

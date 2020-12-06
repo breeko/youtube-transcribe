@@ -18,7 +18,7 @@ interface VideoPageInnerProps {
 
 const VideoPageInner: React.FunctionComponent<VideoPageInnerProps> = (props) => {
   const { name, audioPath, videoPath, innerRaw, start, onSave } = props
-
+  const [isEditable, setIsEditable] = React.useState(true)
   const [isLoggedIn, setIsLoggedIn] = React.useState(false)
   const [inner, setInner] = React.useState<JSX.Element|JSX.Element[]>()
   const [speakers, setSpeakers] = React.useState<string[]>([])
@@ -36,8 +36,11 @@ const VideoPageInner: React.FunctionComponent<VideoPageInnerProps> = (props) => 
       playerContainer.setHighlightedSeconds(start)
     }
     setInner(parse(innerRaw))
-    Auth.currentAuthenticatedUser()
-      .then((u) => setIsLoggedIn(true)).catch(() => setIsLoggedIn(false))
+    Auth.currentAuthenticatedUser().then((u) => setIsLoggedIn(true)).catch(() => setIsLoggedIn(false))
+    return () => {
+      console.log('closing')
+      playerContainer.reset()
+    }
   }, [])
 
 
@@ -84,21 +87,33 @@ const VideoPageInner: React.FunctionComponent<VideoPageInnerProps> = (props) => 
   }, [playerContainer.highlightedSeconds])
 
   React.useEffect(() => {
-    if (isLoggedIn && !isLoading) {
-      const transcripts = [...document.getElementsByClassName("transcript-link")]
-      const editable = [
-        ...document.getElementsByClassName("inner-sentence"),
-        ...transcripts
-      ]
+    if (isLoading) { return }
+    const transcripts = [...document.getElementsByClassName("transcript-link")]
+    const editable = [
+      ...document.getElementsByClassName("inner-sentence"),
+      ...transcripts
+    ]
+    if (isEditable) {
       editable.forEach(e => {
-        e.addEventListener("click", () => sentenceClick(e))
-        e.addEventListener("blur", () => {
+        // @ts-ignore
+        e.addEventListener("click", e.clickFn=() => sentenceClick(e))
+        // @ts-ignore
+        e.addEventListener("blur", e.blurFn=() => {
           e.parentElement.querySelectorAll("sentence-action").forEach(n => n.remove())
           e.removeAttribute("contenteditable")
         })
       })
+    } else {
+      editable.forEach(e => {
+        e.removeAttribute("contenteditable")
+        // @ts-ignore
+        e.addEventListener("click", e.clickFn, false);
+        // @ts-ignore
+        e.addEventListener("blur", e.blurFn, false);
+      
+      })
     }
-  }, [isLoggedIn, isLoading])
+  }, [isEditable, isLoading])
 
   const handleSave = () => {
     if (innerRef.current) {
@@ -155,6 +170,8 @@ const VideoPageInner: React.FunctionComponent<VideoPageInnerProps> = (props) => 
       <div className="video-page-container">
         <Player
           fixed
+          isEditable={isEditable}
+          setIsEditable={setIsEditable}
           videoPath={videoPath}
           audioPath={audioPath}
           save={isLoggedIn ? handleSave : undefined}

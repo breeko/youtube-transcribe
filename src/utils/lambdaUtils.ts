@@ -1,27 +1,34 @@
 import { Auth } from "aws-amplify"
-import { Lambda, AWSError } from "aws-sdk"
+import { AWSError, Lambda } from "aws-sdk"
 import moment from "moment"
-import { TranscribeJob, UploadedMetadata, UserInfo } from "../../types/types"
+import { StagingJob, TranscribeJob, UserInfo } from "../../types/types"
+import axios from "axios"
 
 interface LambdaResponse {
-  status: number
+  statusCode: number
   body: any
   headers: object
 }
 
+const RestUrls = {
+  getPublicTranscript: "https://v2cdh250x5.execute-api.us-east-1.amazonaws.com/dev/transcript",
+}
+
 const Urls = {
   getUser: "arn:aws:lambda:us-east-1:404289073511:function:youtube-dl-lambda-dev-getUser",
+  getStaging: "arn:aws:lambda:us-east-1:404289073511:function:youtube-dl-lambda-dev-getStaging",
+  getStagingAudio: "arn:aws:lambda:us-east-1:404289073511:function:youtube-dl-lambda-dev-getStagingAudio",
+  listStaging: "arn:aws:lambda:us-east-1:404289073511:function:youtube-dl-lambda-dev-listStaging",
+  deleteStaging: "arn:aws:lambda:us-east-1:404289073511:function:youtube-dl-lambda-dev-deleteStaging",
   uploadYoutube: "arn:aws:lambda:us-east-1:404289073511:function:youtube-dl-lambda-dev-uploadYoutube",
-  getMetadatas: "arn:aws:lambda:us-east-1:404289073511:function:youtube-dl-lambda-dev-getMetadatas",
-  getStagedAudio: "arn:aws:lambda:us-east-1:404289073511:function:youtube-dl-lambda-dev-getStagingAudio",
-  deleteStagingAudio: "arn:aws:lambda:us-east-1:404289073511:function:youtube-dl-lambda-dev-deleteStagingAudio",
-  getTranscribeJobs: "arn:aws:lambda:us-east-1:404289073511:function:youtube-dl-lambda-dev-transcribeInfo",
   transcribe: "arn:aws:lambda:us-east-1:404289073511:function:youtube-dl-lambda-dev-transcribe",
+  getTranscript: "arn:aws:lambda:us-east-1:404289073511:function:youtube-dl-lambda-dev-getTranscript",
+  listTranscribe: "arn:aws:lambda:us-east-1:404289073511:function:youtube-dl-lambda-dev-listTranscribe",
+  updateTranscript: "arn:aws:lambda:us-east-1:404289073511:function:youtube-dl-lambda-dev-updateTranscript",
+  getUploadLink: "arn:aws:lambda:us-east-1:404289073511:function:youtube-dl-lambda-dev-getUploadLink",
   stripeConfig: "arn:aws:lambda:us-east-1:404289073511:function:youtube-dl-lambda-dev-stripeConfig",
   stripeCreateCheckoutSession: "arn:aws:lambda:us-east-1:404289073511:function:youtube-dl-lambda-dev-stripeCreateCheckoutSession",
   stripeGetCheckoutSession: "arn:aws:lambda:us-east-1:404289073511:function:youtube-dl-lambda-dev-stripeGetCheckoutSession",
-  getJob: "arn:aws:lambda:us-east-1:404289073511:function:youtube-dl-lambda-dev-getJob",
-  updateTranscript: "arn:aws:lambda:us-east-1:404289073511:function:youtube-dl-lambda-dev-updateTranscript",
 }
 
 type ErrorHandler = {onError: (e: AWSError) => void}
@@ -32,113 +39,134 @@ export interface StripeConfig {
   currency: string
 }
 
-export const fetchStripeConfig = ( args: {onSuccess:  (c: StripeConfig) => void } & ErrorHandler) => {
-  callLambda(
-    Urls.stripeConfig,
+export interface UploadLink {
+  url: string,
+  fields: {
+    [field: string]: string
+  }
+}
+
+
+export const getUser = (): Promise<UserInfo> =>
+  new Promise((resolve, reject) => callLambda(
+    Urls.getUser,
     {},
-    (e, s) => e ? args.onError(e) : args.onSuccess(s)
-  )
-}
+    (e, s) => e ? reject(e) : resolve(s)
+  ))
 
-export const createStripeCheckoutSesssion = ( args: {quantity: number, onSuccess: (sessionId: string) => void } & ErrorHandler) => {
-  callLambda(
-    Urls.stripeCreateCheckoutSession,
-    { quantity: args.quantity },
-    (e, s) => e ? args.onError(e) : args.onSuccess(s.sessionId)
-  )
-}
-export const getStripeCheckoutSesssion = ( args: {sessionId: string, onSuccess: (res: object) => void } & ErrorHandler) => {
-  callLambda(
-    Urls.stripeGetCheckoutSession,
-    { sessionId: args.sessionId },
-    (e, s) => e ? args.onError(e) : args.onSuccess(s.sessionId)
-  )
-}
+export const getUploadLink = async ( args: {filename: string }): Promise<UploadLink> => 
+  new Promise((resolve, reject) => callLambda(
+      Urls.getUploadLink,
+      args,
+      (e, s) => e ? reject(e) : resolve(s)
+    ))
 
-export const updateTranscript = (args: {jobId: string, content: string, onSuccess: () => void} & ErrorHandler) =>
-  callLambda(
+
+export const updateTranscript = (args: {jobId: string, content?: string, public?: boolean}): Promise<TranscribeJob> =>
+  new Promise((resolve, reject) => callLambda(
     Urls.updateTranscript,
     args,
-    (e, s) => e ? args.onError(e) : args.onSuccess()
-  )
+    (e, s) => e ? reject(e) : resolve()
+  ))
 
-export const getJob = (args: {jobId: string, onSuccess: (args: {transcriptPath: string, audioPath: string}) => void} & ErrorHandler) =>
-  callLambda(
-    Urls.getJob,
+export const getStaging = (args: {id: string}): Promise<StagingJob> =>
+  new Promise((resolve, reject) => callLambda(
+    Urls.getStaging,
     args,
-    (e, s) => e ? args.onError(e) : args.onSuccess(s)
-  )
+    (e, s) => e ? reject(e) : resolve(s)
+  ))
 
-export const transcribe = (args: {videoId: string, start: number, duration: number, settings: {MaxSpeakerLabels: number}, onSuccess: () => void} & ErrorHandler) =>
-  callLambda(
+  export const listStaging = (): Promise<StagingJob[]> =>
+  new Promise((resolve, reject) => callLambda(
+    Urls.listStaging,
+    {},
+    (e, s) => {
+      if (e) {
+        return reject(e)
+      }
+      const out = s.map(n => ({...n, uploaded: moment(n.uploaded * 1000)}))
+      resolve(out)
+    }
+  ))
+
+export const transcribe = (args: {id: string, start: number, duration: number, language?: string, settings: { MaxSpeakerLabels: number }} ): Promise<void> =>
+  new Promise((resolve, reject) => callLambda(
     Urls.transcribe,
     args,
-    (e, s) => e ? args.onError(e) : args.onSuccess()
-  )
+    (e, s) => e ? reject(e) : resolve()
+  ))
 
-export const getTranscribeJobs = (args: {onSuccess: (u: TranscribeJob[]) => void} & ErrorHandler) =>
-  callLambda(
-    Urls.getTranscribeJobs,
+export const getTranscript = (args: {jobId: string} ): Promise<{audioPath: string, transcriptPath: string}> =>
+  new Promise((resolve, reject) => callLambda(
+    Urls.getTranscript,
+    args,
+    (e, s) => e ? reject(e) : resolve(s)
+  ))
+
+export const getPublicTranscript = (args: {jobId: string} ): Promise<{audioPath: string, transcriptPath: string}> =>
+  axios.post(RestUrls.getPublicTranscript, JSON.stringify(args)).then(res => res.data)
+
+
+export const listTranscribe = (): Promise<TranscribeJob[]> =>
+  new Promise((resolve, reject) => callLambda(
+    Urls.listTranscribe,
     {},
     (e, s) => {
       if (e !== undefined){
-        return args.onError(e)
+        return reject(e)
       }
       const out = s.map(p => ({...p, created: moment(p.created * 1000)}))
-      args.onSuccess(out as TranscribeJob[])
+      resolve(out as TranscribeJob[])
     }
-  )
+  ))
 
-export const getCognitoUser = (args: {onSuccess: (u: UserInfo) => void} & ErrorHandler) =>
-  callLambda(
-    Urls.getUser,
-    {},
-    (e, s) => e ? args.onError(e) : args.onSuccess(s)
-  )
+export const getStagingAudio = (args: {id: string}): Promise<string> =>
+  new Promise((resolve, reject) => callLambda(
+    Urls.getStagingAudio,
+    args,
+    (e, s) => e ? reject(e): resolve((s as string).replaceAll('"', ''))
+  ))
 
-export const getStagingAudio = (args: {videoId: string, onSuccess: (r: string) => void} & ErrorHandler) => {
-  callLambda(
-    Urls.getStagedAudio,
-    { videoId: args.videoId },
-    (e, s) => e ? args.onError(e): args.onSuccess((s as string).replaceAll('"', ''))
-  )
-}
-
-export const uploadYoutube = (args: {videoId: string, onSuccess: (videoId: string) => void} & ErrorHandler) =>
-  callLambda(
+export const uploadYoutube = (args: {videoId: string}): Promise<string> =>
+  new Promise((resolve, reject) => callLambda(
     Urls.uploadYoutube,
-    { videoId: args.videoId },
-    (e, s) => e ? args.onError(e) : args.onSuccess(s as string)
-  )
+    args,
+    (e, s) => e ? reject(e) : resolve(s as string)
+  ))
 
-export const deleteStagingAudio = (args: {videoId: string, onSuccess: () => void} & ErrorHandler) =>
-  callLambda(
-    Urls.deleteStagingAudio,
-    { videoId: args.videoId },
-    (e, s) => e ? args.onError(e) : args.onSuccess()
-  )
+export const deleteStaging = (args: { id: string }): Promise<void> =>
+  new Promise((resolve, reject) => callLambda(
+    Urls.deleteStaging,
+    args,
+    (e, s) => e ? reject(e) : resolve()
+  ))
 
 
-export const getMetadatas = (args: {onSuccess: (r: UploadedMetadata[]) => void} & ErrorHandler) =>
-  callLambda(
-    Urls.getMetadatas,
-    { },
-    (e, r) => {
-      if (e) {
-        return args.onError(e)
-      }
-      const metas = r as any[]
-      const parsedMetas: UploadedMetadata[] = []
-      metas.forEach(m => {
-        const parsed = {...m}
-        parsed.seconds = Number.parseFloat(m?.seconds)
-        parsed.uploaded = moment(Number.parseFloat(m?.uploaded) * 1000)
-        parsedMetas.push(parsed)
-      })
-      args.onSuccess(parsedMetas)
-    }
-  )
 
+  // stripe
+
+  export const fetchStripeConfig = ( args: {onSuccess:  (c: StripeConfig) => void } & ErrorHandler) => {
+    callLambda(
+      Urls.stripeConfig,
+      {},
+      (e, s) => e ? args.onError(e) : args.onSuccess(s)
+    )
+  }
+  
+  export const createStripeCheckoutSesssion = ( args: {quantity: number, onSuccess: (sessionId: string) => void } & ErrorHandler) => {
+    callLambda(
+      Urls.stripeCreateCheckoutSession,
+      { quantity: args.quantity },
+      (e, s) => e ? args.onError(e) : args.onSuccess(s.sessionId)
+    )
+  }
+  export const getStripeCheckoutSesssion = ( args: {sessionId: string, onSuccess: (res: object) => void } & ErrorHandler) => {
+    callLambda(
+      Urls.stripeGetCheckoutSession,
+      { sessionId: args.sessionId },
+      (e, s) => e ? args.onError(e) : args.onSuccess(s.sessionId)
+    )
+  }
 
 const callLambda = async (
   functionName: string, data: object, callback: (e: AWSError, r: any) => void) => {
@@ -146,7 +174,8 @@ const callLambda = async (
     const accessToken = res.getAccessToken()
     const jwt = accessToken.getJwtToken()
     return jwt
-  })
+  }).catch(() => undefined)
+
   Auth.currentCredentials()
     .then(credentials => {
       const lambda = new Lambda({
@@ -156,10 +185,10 @@ const callLambda = async (
       return lambda.invoke({
         FunctionName: functionName,
         Payload: JSON.stringify({ ...data, token }),
-      }, (_, r) => {
+      }, (a, r) => {
         const response = r && r.Payload ? JSON.parse(r.Payload as string) as LambdaResponse : undefined
-        const err = response.status !== 200 ? response.body : undefined
-        const res = response.status === 200 ? response.body : undefined
+        const err = response && response.statusCode !== 200 ? response.body : undefined
+        const res = response && response.statusCode === 200 ? response.body : undefined
         callback(err, res)
       } )
     })

@@ -1,7 +1,7 @@
 import { Button, Divider, message, Popover, Slider, Space } from "antd"
 import { useRouter } from "next/router"
 import React from "react"
-import { FiCrosshair, FiFastForward, FiHome, FiLogIn, FiLogOut, FiMaximize2, FiMenu, FiMinimize2, FiPause, FiPlay, FiRewind, FiSave, FiUser, FiUsers } from "react-icons/fi"
+import { FiCrosshair, FiFastForward, FiHome, FiLock, FiLogIn, FiLogOut, FiMaximize2, FiMenu, FiMinimize2, FiPause, FiPlay, FiRewind, FiSave, FiUnlock, FiUser, FiUsers } from "react-icons/fi"
 import YouTube from "react-youtube"
 import { YouTubePlayer } from "youtube-player/dist/types"
 import PlayerContainer from "../../../containers/player-container"
@@ -12,6 +12,8 @@ import { parseSeconds } from "../../../utils/timeUtils"
 interface PlayerProps {
   videoPath?: string
   audioPath: string
+  isEditable?: boolean
+  setIsEditable?: (e: boolean) => void
   save?: () => void
   handleAuth?: (action: "login" | "logout") => void
   handleEditSpeakerMappings?: () => void
@@ -19,7 +21,7 @@ interface PlayerProps {
 }
 
 const Player: React.FunctionComponent<PlayerProps> = (props) => {
-  const { audioPath, videoPath, save, handleAuth, handleEditSpeakerMappings, fixed } = props
+  const { audioPath, videoPath, isEditable, setIsEditable, save, handleAuth, handleEditSpeakerMappings, fixed } = props
 
   const [sliderSeconds, setSliderSeconds] = React.useState(0)
   const [curSeconds, setCurSeconds] = React.useState(0)
@@ -33,6 +35,7 @@ const Player: React.FunctionComponent<PlayerProps> = (props) => {
 
   React.useEffect(() => {
     if (videoPath === undefined) {
+      console.log(audioPath)
       // message.info("Video not available", 2.0)
     }
     return () => playerContainer.reset()
@@ -92,7 +95,7 @@ const Player: React.FunctionComponent<PlayerProps> = (props) => {
 
   return(
     <div className={(fixed ? "fixed " : "") + "video-collapsed-row"} >
-      <div className="video-collapsed-container" style={{fontSize: "min(5vw, 36px)"}}>
+      <div className="video-collapsed-container" style={{fontSize: "min(5vw, 30px)"}}>
           <React.Fragment>
 
             <FiHome onClick={ () => router.push("/") }/>
@@ -102,10 +105,6 @@ const Player: React.FunctionComponent<PlayerProps> = (props) => {
               {parseSeconds(curSeconds)}
             </span>
             <Divider type="vertical" />
-            { curExpanded ?
-              <FiMinimize2 onClick={() => setCurExpanded(false)} className={!videoId && "faded"}/> :
-              <FiMaximize2 onClick={() => setCurExpanded(true)}  className={!videoId && "faded"}/>
-            }
             <FiRewind onClick={() => playerContainer.skipSeconds(-15)} />
             {playerContainer.playing ?
               <FiPause onClick={() => playerContainer.pause()}/> :
@@ -113,47 +112,39 @@ const Player: React.FunctionComponent<PlayerProps> = (props) => {
             }
             <FiFastForward onClick={() => playerContainer.skipSeconds(15)} />
             <FiCrosshair onClick={() => { playerContainer.highlightPlaying()} } />
-            
-            {handleAuth && <Popover
-              placement="bottom"
-              title={null}
-              trigger="click"
-              visible={optionsExpanded}
-              onVisibleChange={setOptionsExpanded}
-              content={
-                <Space direction="vertical">
-                  <Button
-                    icon={<FiSave/>}
-                    onClick={() => { save(); setOptionsExpanded(false) }}
-                    className="wide"
-                    disabled={save === undefined}
-                  >
-                    &nbsp;Save
-                  </Button>
-                  {handleEditSpeakerMappings && <Button 
-                    icon={<FiUsers/>}
-                    onClick={() => { handleEditSpeakerMappings(); setOptionsExpanded(false) }}
-                    className="wide" disabled={save === undefined}
-                  >
-                    &nbsp;Edit speaker mappings
-                  </Button>}
-                  <Button
-                    icon={save ? <FiLogOut/> : <FiLogIn/>}
-                    className="wide"
-                    onClick={() => handleAuth(save ? "logout" : "login")}
-                  >
-                    &nbsp;{save ? "Logout" : "Login"}
-                  </Button>
-
-                </Space>
-              }
-            >
-              <FiMenu />
-            </Popover>
-          }
+            {isEditable  !== undefined && setIsEditable !== undefined &&
+              <React.Fragment>
+                <Divider type="vertical" />
+                {/* {isEditable ?
+                  <FiLock 
+                    onClick={() => { setIsEditable(false) }}
+                  /> :
+                  <FiUnlock
+                    onClick={() => { setIsEditable(true) }}
+                  />
+                } */}
+                <FiUsers 
+                  onClick={() => { isEditable && handleEditSpeakerMappings() }}
+                  className={!isEditable ? "disabled" : undefined}
+                />
+                <FiSave
+                  onClick={() => { if (isEditable) { save ? save() : message.error("Not logged in") }}}
+                  className={!isEditable ? "disabled" : undefined}
+                />
+                {save === undefined ?
+                  <FiLogIn
+                  onClick={() => handleAuth("login")}
+                  /> :
+                  <FiLogOut
+                    onClick={() => handleAuth("logout")}
+                  />
+                }
+              </React.Fragment>
+            }
+              
           <Slider
             value={sliderSeconds}
-            max={playerContainer.duration}
+            max={Math.floor(playerContainer.duration)}
             onChange={(s) => setSliderSeconds(s)}
             onAfterChange={(s) => playerContainer.seekTo(s)}
             tipFormatter={(v) => parseSeconds(v)}

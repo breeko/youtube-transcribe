@@ -1,4 +1,4 @@
-import { Space, Button, Divider, Row, Col, Card, Spin, Typography } from "antd"
+import { Space, Button, Divider, Row, Col, Card, Spin, Typography, Image } from "antd"
 import { Auth } from "aws-amplify"
 import Link from "next/link"
 import { useRouter } from "next/router"
@@ -6,6 +6,8 @@ import React from "react"
 import { SiGofundme } from "react-icons/si"
 import ModalContainer from "../../containers/modal-container"
 import { listVideo } from "../../utils/apiUtils"
+import Features from "./features"
+import Pricing from "./pricing"
 
 const { Title, Paragraph } = Typography
 
@@ -47,17 +49,23 @@ const MainPage: React.FunctionComponent<MainPageProps> = () => {
       <div className="main-page">
         <div className="main-splash">
           <Space direction="vertical">
-            <img
-              src={"https://i.ibb.co/vsL1kFR/deep-chats.png"}
+            <Image
+              preview={false}
+              src={"/images/deep-chats.png"}
               alt="Deep Chats Logo"
               width={250}
             />
             <Title className="white" level={1}>Deep Chats</Title>
-            <Paragraph className="white" type="secondary">Video and audio, transcribed and attributed</Paragraph>
+            <Title className="white" level={4} type="secondary">Video and audio, transcribed and attributed</Title>
             <Button onClick={handleGetStarted}>Get started for free</Button>
+            <br/><br/>
           </Space>
         </div>
-        <Divider/>
+        <Divider />
+        <Features />
+        <Divider />
+        <Pricing />
+        <Divider />
         <Title level={2}>Featured Programs</Title>
         <Row gutter={[32,32]} className="padded" justify="space-around">
           <Col xs={12} sm={8}>

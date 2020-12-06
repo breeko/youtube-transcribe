@@ -2,7 +2,6 @@
 
 import React from "react"
 import { createContainer } from "unstated-next"
-import { YouTubePlayer } from 'youtube-player/dist/types'
 import { AudioPlayer } from "../utils/audioPlayer"
 
 
@@ -18,10 +17,14 @@ const usePlayerContainer = () => {
   const play = () => { if (ready) { player?.play().then(() => setPlaying(true)) } }
   const pause = () => { if (ready) { player?.pause(); setPlaying(false) } }
   const reset = () => {
+    console.log(ready)
+    console.log(player)
     pause()
+    player?.stop()
     setPlayer(null)
     setHighlightedSeconds(undefined)
     setReady(false)
+    console.log("done")
   }
 
   const seekTo = async (seconds: number) => {

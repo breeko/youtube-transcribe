@@ -33,11 +33,13 @@ interface UserInfo {
   credits: number
 }
 
-interface UploadedMetadata {
+interface StagingJob {
   uploaded: moment.Moment
   name: string
-  videoId: string
-  seconds: number
+  id: string
+  status: "completed" | "error" | "started"
+  duration?: number
+  error?: string
 }
 
 interface TranscribeJob {
@@ -50,4 +52,7 @@ interface TranscribeJob {
   duration: number
   settings: string
   completed: boolean
+  public: boolean
 }
+
+type MessageType = 'success' | 'info' | 'warning' | 'error'

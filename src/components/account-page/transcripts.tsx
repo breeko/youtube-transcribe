@@ -2,21 +2,22 @@ import { Button, Card, message, Popover, Skeleton, Space, Spin, Table, Typograph
 import { ColumnsType } from "antd/lib/table"
 import { useRouter } from "next/router"
 import React from "react"
-import { FiDownload, FiEye } from "react-icons/fi"
+import { FiDownload, FiEye, FiGlobe } from "react-icons/fi"
 import { TranscribeJob } from "../../../types/types"
-import { getJob } from "../../utils/lambdaUtils"
+import { getTranscript, updateTranscript } from "../../utils/lambdaUtils"
 import { getColumnSearchProps } from "../../utils/tableUtils"
 import { parseSeconds } from "../../utils/timeUtils"
+
 
 const { Text } = Typography
 
 interface TranscriptsProps {
   jobs: TranscribeJob[]
+  onUpdate: () => void
 }
 
-const Transcripts: React.FunctionComponent<TranscriptsProps> = ({ jobs }) => {
+const Transcripts: React.FunctionComponent<TranscriptsProps> = ({ jobs, onUpdate}) => {
   const router = useRouter()
-  
   const [filteredJobs, setFilteredJobs] = React.useState<TranscribeJob[]>()
 
   React.useEffect(() => {
@@ -34,17 +35,26 @@ const Transcripts: React.FunctionComponent<TranscriptsProps> = ({ jobs }) => {
   const handleDownload = (job: TranscribeJob, type: "text" | "html") => {
     const downloadInnerHtml = (filename: string, content: string, type: "text" | "html") => {
         const link = document.createElement('a')
+        link.setAttribute('download', filename)
         const mimeType = type === "text" ? 'text/plain' : "text/html"
         const txt = type === "text" ? content.replace(/(<([^>]+)>)/g, "").replace(/\n{2,}/g,'\n') : content
-        link.setAttribute('download', filename)
         link.setAttribute('href', 'data:' + mimeType + ';charset=utf-8,' + encodeURIComponent(txt))
         link.click()
     }
-    getJob({jobId: job.id,
-      onSuccess: ({transcriptPath}) => fetch(transcriptPath)
-        .then(content => content.text()
-        .then(content => downloadInnerHtml(`${job.name}.txt`, content , type))),
-      onError: () => message.error("Download failed")
+    
+    getTranscript({jobId: job.id})
+      .then(({transcriptPath}) => {
+          fetch(transcriptPath)
+            .then(content => content.text()
+            .then(content => downloadInnerHtml(`${job.name}.txt`, content , type)))
+      }).catch((e) => console.log(e)
+    )
+  }
+
+  const togglePublic = (jobId: string, p: boolean) => {
+    updateTranscript({jobId, public: p}).then(() => {
+      message.success(`Set transcript to ${p ? "public" : "private"}`)
+      onUpdate()
     })
   }
 
@@ -65,6 +75,10 @@ const Transcripts: React.FunctionComponent<TranscriptsProps> = ({ jobs }) => {
           >
           <Button icon={<FiDownload/>}/>
           </Popover>
+          <Button
+            icon={<FiGlobe/>}
+            onClick={() => togglePublic(record.id, !record.public)}
+            className={record.public ? undefined : "faded"}/>
         </Space>
       </Spin>
     },
@@ -81,7 +95,7 @@ const Transcripts: React.FunctionComponent<TranscriptsProps> = ({ jobs }) => {
   return(
     <Card>
       {jobs === undefined ?
-        <Skeleton/> :
+        <Skeleton loading/> :
         <Table dataSource={filteredJobs} columns={columns}/>
       }
     </Card>

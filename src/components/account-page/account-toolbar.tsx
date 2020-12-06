@@ -25,9 +25,6 @@ const AccountToolbar: React.FunctionComponent<AccountToolbarProps> = ({ userInfo
         >&nbsp;Add Credits</Button>
         <Divider type="vertical"/>
         <Statistic title="Credits" value={userInfo?.credits} precision={2} />
-        <Divider type="vertical"/>
-        <Statistic title="Email" value={userInfo?.email} />
-        {/* <Statistic title="Transcripts" value={userInfo.credits} precision={2} /> */}
       </Space>
     </Card>
   )

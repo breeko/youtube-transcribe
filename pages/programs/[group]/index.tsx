@@ -33,7 +33,7 @@ const GroupPage: React.FunctionComponent = () => {
           <Row className="padded" gutter={[32, 32]} justify="space-around">
           {media?.videos.map(v => {
             return(
-              <Col xs={24} sm={12} md={8}>
+              <Col xs={24} sm={12} md={8} key={v.id}>
                 <VideoCard video={v} defaultImage={media.image}/>
               </Col>
             )
