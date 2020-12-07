@@ -1,5 +1,5 @@
 import { loadStripe, Stripe } from "@stripe/stripe-js"
-import { Col, InputNumber, message, Modal, Row, Skeleton, Typography } from "antd"
+import { Col, InputNumber, message, Modal, Row, Skeleton, Spin, Typography } from "antd"
 import React from "react"
 import { createStripeCheckoutSesssion, fetchStripeConfig, StripeConfig } from "../../utils/lambdaUtils"
 
@@ -38,7 +38,6 @@ const CheckoutModal: React.FunctionComponent<CheckoutModalProps> = ({onSuccess, 
   const [price, setPrice] = React.useState("")
 
   const handleComplete = () => {
-
     if (stripe && sessionId) {
       stripe.redirectToCheckout({ sessionId })
     }
@@ -69,7 +68,7 @@ const CheckoutModal: React.FunctionComponent<CheckoutModalProps> = ({onSuccess, 
   }, [config, quantity])
 
   return(
-    <Modal visible={true} title="Add credits" onCancel={onCancel} onOk={handleComplete}>
+    <Modal visible={true} title="Add credits" onCancel={onCancel} onOk={handleComplete} >
       <Row>
         <Col xs={24}>
           {price === undefined ? <Skeleton/> : <Title level={2}>{price || "$10.00"}</Title>}

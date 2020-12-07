@@ -13,10 +13,11 @@ const { Text } = Typography
 
 interface TranscriptsProps {
   jobs: TranscribeJob[]
+  id?: string
   onUpdate: () => void
 }
 
-const Transcripts: React.FunctionComponent<TranscriptsProps> = ({ jobs, onUpdate}) => {
+const Transcripts: React.FunctionComponent<TranscriptsProps> = ({ jobs, onUpdate, id }) => {
   const router = useRouter()
   const [filteredJobs, setFilteredJobs] = React.useState<TranscribeJob[]>()
 
@@ -93,7 +94,7 @@ const Transcripts: React.FunctionComponent<TranscriptsProps> = ({ jobs, onUpdate
   ]
 
   return(
-    <Card>
+    <Card id={id}>
       {jobs === undefined ?
         <Skeleton loading/> :
         <Table dataSource={filteredJobs} columns={columns}/>

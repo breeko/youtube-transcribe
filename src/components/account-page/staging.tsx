@@ -14,10 +14,11 @@ const { Paragraph, Text, Title } = Typography
 interface StagingProps {
   metas: StagingJob[]
   onUpdate: () => void
+  id?: string
 }
 
 
-const Staging: React.FunctionComponent<StagingProps> = ({ metas, onUpdate }) => {
+const Staging: React.FunctionComponent<StagingProps> = ({ id, metas, onUpdate }) => {
   const [filteredJobs, setFilteredJobs] = React.useState<StagingJob[]>()
 
   const modalContainer = ModalContainer.useContainer()
@@ -76,7 +77,7 @@ const Staging: React.FunctionComponent<StagingProps> = ({ metas, onUpdate }) => 
   ]
 
   return(
-    <Card>
+    <Card id={id}>
       {filteredJobs === undefined ?
         <Skeleton loading/> :
         <Table dataSource={filteredJobs} columns={columns} />
