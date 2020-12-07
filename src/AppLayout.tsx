@@ -14,6 +14,7 @@ interface AppLayoutProps {
 }
 
 const AppLayout: React.FunctionComponent<AppLayoutProps> = (props) => {
+
   return(
     <Layout className="app-layout">
       <PlayerContainer.Provider>

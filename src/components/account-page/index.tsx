@@ -40,7 +40,7 @@ const AccountPageInner: React.FunctionComponent<AccountPageInnerProps> = () => {
         }
         setMetas(m)
       })
-      .catch(e => console.log(e))
+      .catch(e => message.error("Error loading videos"))
   }
 
   const fetchJobs = () => {
@@ -61,15 +61,6 @@ const AccountPageInner: React.FunctionComponent<AccountPageInnerProps> = () => {
   }
 
   React.useEffect(() => {
-    const sessionId = router.asPath.match(/\?sessionId=([^&]+)/)?.[1]
-    if (sessionId !== undefined) {
-      window.history.replaceState(null, document.title, "/account")
-      getStripeCheckoutSesssion({
-        sessionId,
-        onSuccess: () => { message.success("Credit applied"); fetchUserInfo(); },
-        onError: (e) => message.error(e)
-      })
-    }
     fetchAll()
   }, [])
 

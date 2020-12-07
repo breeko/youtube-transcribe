@@ -56,7 +56,7 @@ const MainPage: React.FunctionComponent<MainPageProps> = () => {
               width={250}
             />
             <Title className="white" level={1}>Deep Chats</Title>
-            <Title className="white" level={4} type="secondary">Video and audio, transcribed and attributed</Title>
+            <Title className="white" level={2} type="secondary">Video and audio, transcribed and attributed</Title>
             <Button onClick={handleGetStarted}>Get started for free</Button>
             <br/><br/>
           </Space>
@@ -64,7 +64,7 @@ const MainPage: React.FunctionComponent<MainPageProps> = () => {
         <Divider />
         <Features />
         <Divider />
-        <Link href="/examples"><Title level={2} className="padded"><a>See Example Transcripts</a></Title></Link>
+        <Title level={2} className="padded"><Link href="/examples"><a>See Example Transcripts</a></Link></Title>
         <Divider />
         <Pricing />
         <Divider />

@@ -30,23 +30,15 @@ const Player: React.FunctionComponent<PlayerProps> = (props) => {
 
   const playerContainer = PlayerContainer.useContainer()
 
+  const audioRef = React.useRef<HTMLAudioElement>(null)
+
   const router = useRouter()
 
   React.useEffect(() => {
-    if (videoPath === undefined) {
-      console.log(audioPath)
-      // message.info("Video not available", 2.0)
+    if (videoId === undefined) {
+      playerContainer.setAudio(audioRef)
     }
     return () => playerContainer.reset()
-  }, [])
-
-  React.useEffect(() => {
-    if (videoId === undefined) {
-      const audio = new Audio(audioPath)
-      const p = getAudioPlayer(audio)
-      playerContainer.setPlayer(p)
-      audio.addEventListener('loadedmetadata', () => playerContainer.setDuration(audio.duration))
-    }
   }, [])
 
   React.useEffect(() => {
@@ -94,10 +86,10 @@ const Player: React.FunctionComponent<PlayerProps> = (props) => {
 
   return(
     <div className={(fixed ? "fixed " : "") + "video-collapsed-row"} >
-      <div className="video-collapsed-container" style={{fontSize: "min(5vw, 30px)"}}>
+      <div className="video-collapsed-container" style={{fontSize: "min(5vw, 30px)" }}>
           <React.Fragment>
+            <audio ref={audioRef} src={audioPath} />
             <FiHome onClick={ () => router.push("/") }/>
-            <FiUser onClick={ () => router.push("/account") }/>
             <Divider type="vertical" />
             <span>
               {parseSeconds(curSeconds)}
@@ -156,7 +148,7 @@ const Player: React.FunctionComponent<PlayerProps> = (props) => {
         <YouTube
           onReady={t => {
             const p = getYoutubeAudioPlayer(t.target)
-            playerContainer.setPlayer(p)
+            // playerContainer.setPlayer(p)
             playerContainer.setDuration(t.target.getDuration())
           }}
           onPlay={() => playerContainer.play()}

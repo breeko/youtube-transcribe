@@ -49,8 +49,8 @@ const Staging: React.FunctionComponent<StagingProps> = ({ metas, onUpdate }) => 
 
   const columns: ColumnsType<StagingJob> = [
     {key: "actions", title: "Actions", render: (v, record) =>
-      <Spin spinning={record.status === "started"}>
-        <Space direction="horizontal" key={record.id}>
+      <Spin spinning={record.status === "started"} key={record.id}>
+        <Space direction="horizontal">
           <Popconfirm
             title="Are you sure you want to delete?"
             onConfirm={() => handleDelete(record)}

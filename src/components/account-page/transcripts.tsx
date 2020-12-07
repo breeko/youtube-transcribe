@@ -47,7 +47,7 @@ const Transcripts: React.FunctionComponent<TranscriptsProps> = ({ jobs, onUpdate
           fetch(transcriptPath)
             .then(content => content.text()
             .then(content => downloadInnerHtml(`${job.name}.txt`, content , type)))
-      }).catch((e) => console.log(e)
+      }).catch((e) => message.error("Error loading transcript")
     )
   }
 

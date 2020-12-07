@@ -8,56 +8,56 @@ import { AudioPlayer } from "../utils/audioPlayer"
 const usePlayerContainer = () => {
   const [ready, setReady] = React.useState(false)
   const [duration, setDuration] = React.useState(0)
-  const [player, setPlayer] = React.useState<AudioPlayer | null>(null)
+  // const [player, setPlayer] = React.useState<AudioPlayer | null>(null)
+  const [audio, setAudio] = React.useState<React.MutableRefObject<HTMLAudioElement>>(null)
   const [playing, setPlaying] = React.useState(false)
   const [highlightedSeconds, setHighlightedSeconds] = React.useState<undefined | number>(undefined)
 
-  const getCurrentTime = () => ready && player.getCurrentTime()
+  const getCurrentTime = () => ready && audio.current.currentTime
 
-  const play = () => { if (ready) { player?.play().then(() => setPlaying(true)) } }
-  const pause = () => { if (ready) { player?.pause(); setPlaying(false) } }
+  const play = () => { if (ready) { audio.current.play().then(() => setPlaying(true)) } }
+  const pause = () => { if (ready) { audio.current.pause(); setPlaying(false) } }
   const reset = () => {
-    console.log(ready)
-    console.log(player)
     pause()
-    player?.stop()
-    setPlayer(null)
+    setAudio(null)
     setHighlightedSeconds(undefined)
     setReady(false)
-    console.log("done")
   }
 
   const seekTo = async (seconds: number) => {
     if (!ready) { return }
     play()
     let ct = 0
-    while (!player.getReady() && ct < 10) {
+    while (!(audio.current.readyState > 1) && ct < 10) {
       // initial state takes a little bit to start up
       await new Promise(r => setTimeout(r, 500))
       ct += 1
     }
-    player?.seekTo(seconds)
+    if (audio !== undefined) {
+      audio.current.currentTime = seconds
+    }
   }
 
-  const skipSeconds = (seconds: number) => ready && seekTo(player.getCurrentTime() + seconds)
+  const skipSeconds = (seconds: number) => ready && seekTo(audio.current.currentTime + seconds)
 
-  const highlightPlaying = () => ready && setHighlightedSeconds(player.getCurrentTime() + Math.random() / 100)
+  const highlightPlaying = () => ready && setHighlightedSeconds(audio.current.currentTime + Math.random() / 100)
 
   React.useEffect(() => {
-    if (player) {
+    if (audio?.current) {
       setReady(true)
     } else {
       setReady(false)
     }
-  }, [player])
+  }, [audio?.current])
 
   return {
+    audio,
     ready,
     reset,
     playing,
     duration,
     setDuration,
-    setPlayer,
+    setAudio,
     getCurrentTime,
     play,
     pause,

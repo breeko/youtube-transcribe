@@ -38,10 +38,6 @@ const VideoPageInner: React.FunctionComponent<VideoPageInnerProps> = (props) => 
     }
     setInner(parse(innerRaw))
     Auth.currentAuthenticatedUser().then((u) => setIsLoggedIn(true)).catch(() => setIsLoggedIn(false))
-    return () => {
-      console.log('closing')
-      playerContainer.reset()
-    }
   }, [])
 
 
@@ -76,7 +72,6 @@ const VideoPageInner: React.FunctionComponent<VideoPageInnerProps> = (props) => 
     const children = [...highlightSentence.querySelector(".inner-sentence").children]
     const startIdx = children.findIndex(c => Number(c.getAttribute("data-start")) >= toFind)
     const els = children.slice(startIdx, startIdx + 20)
-    console.log(els)
     if (els && els.length > 0) {
       els[0].scrollIntoView({
         behavior: 'auto',

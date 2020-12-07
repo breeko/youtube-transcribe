@@ -47,7 +47,29 @@ export default class MyDocument extends Document {
           <meta name="msapplication-TileColor" content="#ffffff" />
           <meta name="msapplication-TileImage" content="/favicon/ms-icon-144x144.png" />
           <meta name="theme-color" content="#ffffff" />
-
+          {/* google ads */}
+          <script async src="https://www.googletagmanager.com/gtag/js?id=AW-956441070"></script>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'AW-956441070');`,}}
+          />
+          {/* google analytics */}
+          <script async src="https://www.googletagmanager.com/gtag/js?id=G-5PNQFXES5C"></script>
+          <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                
+                  gtag('config', 'G-D4669286HK');
+                  `
+              }}
+            />
           </Head>
         <body>
           <Main />

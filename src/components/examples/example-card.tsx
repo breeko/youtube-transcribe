@@ -1,5 +1,6 @@
 import { Card, Typography } from "antd"
 import Link from "next/link"
+import { useRouter } from "next/router"
 import React from "react"
 
 const { Paragraph } = Typography
@@ -11,18 +12,17 @@ interface ExampleCardProps {
 }
 
 const ExampleCard: React.FunctionComponent<ExampleCardProps> = ({ title, image, path }) => {
-
+  const router = useRouter()
   return (
-    <Link href={path}>
       <Card
         hoverable
         cover={<img src={image} />}
         className="media-card"
         size="small"
+        onClick={() => router.push(path)}
       >
         <Paragraph>{title}</Paragraph>
       </Card>
-    </Link>
   )
 }
 

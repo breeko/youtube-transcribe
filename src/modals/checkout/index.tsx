@@ -45,7 +45,7 @@ const CheckoutModal: React.FunctionComponent<CheckoutModalProps> = ({onSuccess, 
   }
 
   const updateSession = (quantity: number) => {
-    createStripeCheckoutSesssion({quantity, onSuccess: (s) => setSessionId(s), onError: (e) => message.error(e)})
+    createStripeCheckoutSesssion({quantity, onSuccess: (s) => setSessionId(s), onError: (e) => message.error("Error loading session")})
   }
 
   React.useEffect(() => {
@@ -72,7 +72,7 @@ const CheckoutModal: React.FunctionComponent<CheckoutModalProps> = ({onSuccess, 
     <Modal visible={true} title="Add credits" onCancel={onCancel} onOk={handleComplete}>
       <Row>
         <Col xs={24}>
-          {price === undefined ? <Skeleton/> : <Title level={2}>{price}</Title>}
+          {price === undefined ? <Skeleton/> : <Title level={2}>{price || "$10.00"}</Title>}
         </Col>
         <Col xs={16}>
           <Title level={3}>{(60 * quantity).toLocaleString()} credits</Title>

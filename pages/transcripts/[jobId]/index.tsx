@@ -17,6 +17,7 @@ const TranscriptPage: React.FunctionComponent = () => {
   const router = useRouter()
 
   React.useEffect(() => {
+    if (window === undefined) { return }
     const paths = window.location.pathname.split('/')
     const jobId = paths.length > 0 ? paths[paths.length - 1] : undefined
     if (jobId === undefined) {
