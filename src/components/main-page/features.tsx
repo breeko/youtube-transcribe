@@ -11,9 +11,9 @@ const { Title, Paragraph } = Typography
 
 const Features = () => {
   return(
-    <Space direction="vertical">
-      <Title level={3}>Features</Title>
-      <Row gutter={[32,32]} className="padded">
+    <React.Fragment>
+      <Title level={2}>Features</Title>
+      <Row >
         <FeatureCard title="State of the art artifical intelligence" description="Leverages machine learning developed by Amazon" image={<BiBrain size={70}/>} />
         <FeatureCard title="Speaker identification" description="Automatically detects different speakers, with up to 10 speakers in one recording" image={<HiOutlineChatAlt2 size={70} />} />
         <FeatureCard title="Exports to text or html" description="Export transcript to text, html or use an interactive player" image={<FiShare size={70} />} />
@@ -23,7 +23,7 @@ const Features = () => {
         <FeatureCard title="Multiple audio and video support" description="Supports most audio and video formats with uploads up to 250 MB" image={<FaRegFileAudio size={70}/>} />
         <FeatureCard title="Live transcript synced with audio" description="Interactive player lets you start playing at different parts and follow along" image={<FiZap size={70}/>} />
       </Row> 
-    </Space>
+    </React.Fragment>
   )
 }
 

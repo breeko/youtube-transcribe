@@ -14,6 +14,7 @@ const UploadVideoForm: React.FunctionComponent<UploadVideoFormProps> = ({ onSucc
 
   const handleSuccess = (r: string) => {
     message.success("Upload successful")
+    form.resetFields()
     onSuccess(r)
   }
 

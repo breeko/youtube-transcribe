@@ -26,7 +26,6 @@ const Player: React.FunctionComponent<PlayerProps> = (props) => {
   const [sliderSeconds, setSliderSeconds] = React.useState(0)
   const [curSeconds, setCurSeconds] = React.useState(0)
   const [curExpanded, setCurExpanded] = React.useState(false)
-  const [optionsExpanded, setOptionsExpanded] = React.useState(false)
   const [videoId, setVideoId] = React.useState(videoPath ? getVideoId(videoPath) : undefined)
 
   const playerContainer = PlayerContainer.useContainer()
@@ -97,7 +96,6 @@ const Player: React.FunctionComponent<PlayerProps> = (props) => {
     <div className={(fixed ? "fixed " : "") + "video-collapsed-row"} >
       <div className="video-collapsed-container" style={{fontSize: "min(5vw, 30px)"}}>
           <React.Fragment>
-
             <FiHome onClick={ () => router.push("/") }/>
             <FiUser onClick={ () => router.push("/account") }/>
             <Divider type="vertical" />
@@ -107,8 +105,8 @@ const Player: React.FunctionComponent<PlayerProps> = (props) => {
             <Divider type="vertical" />
             <FiRewind onClick={() => playerContainer.skipSeconds(-15)} />
             {playerContainer.playing ?
-              <FiPause onClick={() => playerContainer.pause()}/> :
-              <FiPlay onClick={() => playerContainer.play()}/>
+              <FiPause onClick={() => playerContainer.pause()} /> :
+              <FiPlay onClick={() => playerContainer.play()} id="player-play-button"/>
             }
             <FiFastForward onClick={() => playerContainer.skipSeconds(15)} />
             <FiCrosshair onClick={() => { playerContainer.highlightPlaying()} } />

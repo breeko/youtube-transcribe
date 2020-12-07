@@ -152,7 +152,7 @@ const Pricing: React.FunctionComponent = () => {
 
   return(
     <Space direction="vertical">
-      <Title level={3}>Pricing</Title>
+      <Title level={2}>Pricing</Title>
       <Table dataSource={prices} columns={columns} pagination={false}/>
     </Space>
   )

@@ -64,6 +64,8 @@ const MainPage: React.FunctionComponent<MainPageProps> = () => {
         <Divider />
         <Features />
         <Divider />
+        <Link href="/examples"><Title level={2} className="padded"><a>See Example Transcripts</a></Title></Link>
+        <Divider />
         <Pricing />
         <Divider />
         <Title level={2}>Featured Programs</Title>

@@ -20,6 +20,7 @@ const VideoPageInner: React.FunctionComponent<VideoPageInnerProps> = (props) => 
   const { name, audioPath, videoPath, innerRaw, start, onSave } = props
   const [isEditable, setIsEditable] = React.useState(true)
   const [isLoggedIn, setIsLoggedIn] = React.useState(false)
+  const [isTourOpen, setIsTourOpen] = React.useState(true)
   const [inner, setInner] = React.useState<JSX.Element|JSX.Element[]>()
   const [speakers, setSpeakers] = React.useState<string[]>([])
   const [isLoading, setIsLoading] = React.useState(true)
@@ -47,7 +48,7 @@ const VideoPageInner: React.FunctionComponent<VideoPageInnerProps> = (props) => 
   React.useEffect(() => {
     // setup inner html
     if (inner === undefined || !playerContainer.ready) { return }
-    const transcriptLinks: Element[] = [...document.getElementsByClassName("transcript-link")]
+    const transcriptLinks: Element[] = [...document?.getElementsByClassName("transcript-link")]
     const newSpeakers = new Set<string>()
     transcriptLinks.forEach(e => {
       const seconds = Number(e.getAttribute("data-start"))
@@ -64,7 +65,7 @@ const VideoPageInner: React.FunctionComponent<VideoPageInnerProps> = (props) => 
 
   React.useEffect(() => {
     if (playerContainer.highlightedSeconds === undefined) { return }
-    const elems: Element[] = [...document.getElementsByClassName("transcript-sentence")]
+    const elems: Element[] = [...document?.getElementsByClassName("transcript-sentence")]
     const toFind = Math.floor(playerContainer.highlightedSeconds * 100) / 100
     const highlightSentence = elems.find(e => {
       const start = Number(e.getAttribute("data-start"))
@@ -88,9 +89,9 @@ const VideoPageInner: React.FunctionComponent<VideoPageInnerProps> = (props) => 
 
   React.useEffect(() => {
     if (isLoading) { return }
-    const transcripts = [...document.getElementsByClassName("transcript-link")]
+    const transcripts = [...document?.getElementsByClassName("transcript-link")]
     const editable = [
-      ...document.getElementsByClassName("inner-sentence"),
+      ...document?.getElementsByClassName("inner-sentence"),
       ...transcripts
     ]
     if (isEditable) {
@@ -133,7 +134,7 @@ const VideoPageInner: React.FunctionComponent<VideoPageInnerProps> = (props) => 
   }
 
   const updateSpeakerMapping = (speakers: Object) => {
-    const orig = [...document.getElementsByClassName("transcript-link")]
+    const orig = [...document?.getElementsByClassName("transcript-link")]
     const newSpeakers = new Set<string>()
     let ct = 0
     Object.entries(speakers).forEach(([prior, updated]) => {
