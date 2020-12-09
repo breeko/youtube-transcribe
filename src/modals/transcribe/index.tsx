@@ -9,11 +9,12 @@ import TranscribeForm from "./transcribe-form"
 interface TranscribeModalProps {
   title: string
   id: string
+  duration: number
   onSuccess: () => void
   onCancel: () => void
 }
 
-const TranscribeModal: React.FunctionComponent<TranscribeModalProps> = ({ title, id, onSuccess, onCancel }) => {
+const TranscribeModal: React.FunctionComponent<TranscribeModalProps> = ({ title, id, duration, onSuccess, onCancel }) => {
   const [audioPath, setAudioPath] = React.useState<string>()
   const [credits, setCredits] = React.useState(0)
 
@@ -44,7 +45,7 @@ const TranscribeModal: React.FunctionComponent<TranscribeModalProps> = ({ title,
         <Divider />
           <TranscribeForm
             videoId={id}
-            duration={playerContainer.duration}
+            duration={duration}
             credits={credits}
             onSuccess={handleOk}
             onCancel={handleCancel}

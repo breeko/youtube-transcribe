@@ -25,6 +25,7 @@ interface TranscribeProps {
   key: "transcribe"
   title: string
   id: string
+  duration: number
   onSuccess: () => void
 }
 
@@ -70,6 +71,7 @@ const useModalContainer = () => {
             title={modalProps.title}
             id={modalProps.id}
             onSuccess={modalProps.onSuccess}
+            duration={modalProps.duration}
             onCancel={() => setModalProps(undefined)}
           />
           break

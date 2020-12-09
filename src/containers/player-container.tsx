@@ -14,7 +14,6 @@ const usePlayerContainer = () => {
   const [highlightedSeconds, setHighlightedSeconds] = React.useState<undefined | number>(undefined)
 
   const getCurrentTime = () => ready && audio.current.currentTime
-
   const play = () => { if (ready) { audio.current.play().then(() => setPlaying(true)) } }
   const pause = () => { if (ready) { audio.current.pause(); setPlaying(false) } }
   const reset = () => {

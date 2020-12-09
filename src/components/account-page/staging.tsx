@@ -45,6 +45,7 @@ const Staging: React.FunctionComponent<StagingProps> = ({ id, metas, onUpdate })
       key: "transcribe",
       id: record.id,
       title: record.name,
+      duration: record.duration,
       onSuccess: () => { message.success("Job created"); onUpdate(); modalContainer.setModalProps(undefined) }})
   }
 

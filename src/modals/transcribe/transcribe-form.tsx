@@ -57,6 +57,12 @@ const TranscribeForm: React.FunctionComponent<TranscribeFormProps> = ({videoId, 
 
   const calculateCost = (start: number, end: number) => Math.max(0.0, (end - start - SECONDS_FREE) / 60.0)
 
+  React.useEffect(() => {
+    form.setFieldsValue({range: [0, duration]})
+    handleSliderChange()
+  }, [])
+
+
   return(
     <React.Fragment>
       <Spin spinning={isLoading}>
@@ -71,7 +77,7 @@ const TranscribeForm: React.FunctionComponent<TranscribeFormProps> = ({videoId, 
               <Divider type="vertical"/>
               <Statistic value={form.getFieldValue("range")?.[1]} title="End" formatter={parseSeconds}/>
               <Divider type="vertical"/>
-              <Statistic value={form.getFieldValue("range")?.[1] - form.getFieldValue("range")?.[0]} title="Length" formatter={parseSeconds}/>
+              <Statistic value={form.getFieldValue("range")?.[1] - form.getFieldValue("range")?.[0] || duration} title="Length" formatter={parseSeconds}/>
             </Space>
           }
           <Paragraph type="secondary">First {SECONDS_FREE} seconds free</Paragraph>

@@ -38,7 +38,7 @@ interface StagingJob {
   name: string
   id: string
   status: "completed" | "error" | "started"
-  duration?: number
+  duration: number
   error?: string
 }
 

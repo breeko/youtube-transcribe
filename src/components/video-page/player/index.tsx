@@ -37,6 +37,7 @@ const Player: React.FunctionComponent<PlayerProps> = (props) => {
   React.useEffect(() => {
     if (videoId === undefined) {
       playerContainer.setAudio(audioRef)
+      playerContainer.setDuration(audioRef.current.duration)
     }
     return () => playerContainer.reset()
   }, [])
