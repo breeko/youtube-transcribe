@@ -7,7 +7,6 @@ import { AudioPlayer } from "../utils/audioPlayer"
 
 const usePlayerContainer = () => {
   const [ready, setReady] = React.useState(false)
-  const [duration, setDuration] = React.useState(0)
   // const [player, setPlayer] = React.useState<AudioPlayer | null>(null)
   const [audio, setAudio] = React.useState<React.MutableRefObject<HTMLAudioElement>>(null)
   const [playing, setPlaying] = React.useState(false)
@@ -54,8 +53,6 @@ const usePlayerContainer = () => {
     ready,
     reset,
     playing,
-    duration,
-    setDuration,
     setAudio,
     getCurrentTime,
     play,

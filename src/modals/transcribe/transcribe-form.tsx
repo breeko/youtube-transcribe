@@ -58,7 +58,7 @@ const TranscribeForm: React.FunctionComponent<TranscribeFormProps> = ({videoId, 
   const calculateCost = (start: number, end: number) => Math.max(0.0, (end - start - SECONDS_FREE) / 60.0)
 
   React.useEffect(() => {
-    form.setFieldsValue({range: [0, duration]})
+    form.setFieldsValue({range: [0, Math.floor(duration)]})
     handleSliderChange()
   }, [])
 
@@ -100,7 +100,7 @@ const TranscribeForm: React.FunctionComponent<TranscribeFormProps> = ({videoId, 
           >
             <Slider
               range
-              min={0} max={duration}
+              min={0} max={Math.floor(duration)}
               tipFormatter={(v) => parseSeconds(v)}
               onChange={() => handleSliderChange()}
             />

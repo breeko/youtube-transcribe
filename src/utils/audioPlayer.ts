@@ -1,7 +1,7 @@
 import { YouTubePlayer } from "youtube-player/dist/types"
 
 export interface AudioPlayer {
-  seconds: number
+  duration: number
   getCurrentTime: () => number
   getReady: () => boolean
   play: () => Promise<void>
@@ -17,7 +17,7 @@ export const getAudioPlayer = (a: HTMLAudioElement): AudioPlayer => {
     play: () => a.play(),
     pause: () => a.pause(),
     seekTo: (s: number) => a.currentTime = s,
-    seconds: a.duration,
+    duration: a.duration,
     stop: () => { a.src = "" }
   }
   return p
@@ -30,7 +30,7 @@ export const getYoutubeAudioPlayer = (yt: YouTubePlayer): AudioPlayer => {
     play: () => Promise.resolve(yt.playVideo()),
     pause: () => yt.pauseVideo(),
     seekTo: (s: number) => yt.seekTo(s, true),
-    seconds: yt.getDuration(),
+    duration: yt.getDuration(),
     stop: () => { /* */}
   }
   return p

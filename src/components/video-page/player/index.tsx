@@ -37,10 +37,9 @@ const Player: React.FunctionComponent<PlayerProps> = (props) => {
   React.useEffect(() => {
     if (videoId === undefined) {
       playerContainer.setAudio(audioRef)
-      playerContainer.setDuration(audioRef.current.duration)
     }
     return () => playerContainer.reset()
-  }, [])
+  }, [audioRef])
 
   React.useEffect(() => {
     // updates the time
@@ -135,7 +134,7 @@ const Player: React.FunctionComponent<PlayerProps> = (props) => {
               
           <Slider
             value={sliderSeconds}
-            max={Math.floor(playerContainer.duration)}
+            max={Math.floor(playerContainer.audio?.current.duration)}
             onChange={(s) => setSliderSeconds(s)}
             onAfterChange={(s) => playerContainer.seekTo(s)}
             tipFormatter={(v) => parseSeconds(v)}
@@ -150,7 +149,6 @@ const Player: React.FunctionComponent<PlayerProps> = (props) => {
           onReady={t => {
             const p = getYoutubeAudioPlayer(t.target)
             // playerContainer.setPlayer(p)
-            playerContainer.setDuration(t.target.getDuration())
           }}
           onPlay={() => playerContainer.play()}
           onPause={() => playerContainer.pause()}
